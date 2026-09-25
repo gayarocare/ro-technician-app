@@ -1,0 +1,3191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>SmartChoice RO Technician App</title>
+  <meta name="theme-color" content="#2563eb">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <style>
+    :root {
+      --bg-primary: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-card: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --primary: #2563eb;
+      --accent-red: #dc2626;
+      --accent-red-bg: #fef2f2;
+      --accent-green: #16a34a;
+      --accent-green-bg: #f0fdf4;
+      --border-color: #cbd5e1;
+      --chip-bg: #f1f5f9;
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+      --wa-bg-color: #efeae2;
+      --wa-text-color: #111b21;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-bottom: 40px;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 500px;
+      background-color: var(--bg-surface);
+      min-height: 100vh;
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    @media (min-width: 501px) {
+      .app-container {
+        min-height: calc(100vh - 40px);
+        margin-top: 20px;
+        margin-bottom: 20px;
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+      }
+    }
+
+    .header {
+      background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+      color: #ffffff;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .brand-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      font-size: 1.1rem;
+    }
+
+    .brand-title svg {
+      width: 24px;
+      height: 24px;
+      fill: #60a5fa;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .icon-btn {
+      background: rgba(255, 255, 255, 0.15);
+      border: none;
+      color: white;
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    .tabs-nav {
+      display: flex;
+      background-color: var(--bg-surface);
+      border-bottom: 1px solid var(--border-color);
+      position: sticky;
+      top: 68px;
+      z-index: 40;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 14px 10px;
+      background: none;
+      border: none;
+      border-bottom: 3px solid transparent;
+      font-weight: 700;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      text-align: center;
+    }
+
+    .tab-btn.active-complaint {
+      color: var(--accent-red);
+      border-bottom-color: var(--accent-red);
+      background-color: var(--accent-red-bg);
+    }
+
+    .tab-btn.active-installation {
+      color: var(--accent-green);
+      border-bottom-color: var(--accent-green);
+      background-color: var(--accent-green-bg);
+    }
+
+    .form-body {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      flex: 1;
+    }
+
+    .tab-content {
+      display: none;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .tab-content.active {
+      display: flex;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-main);
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-field {
+      width: 100%;
+      padding: 12px 14px;
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      font-size: 0.95rem;
+      color: var(--text-main);
+      outline: none;
+    }
+
+    .input-field:focus {
+      border-color: var(--primary);
+    }
+
+    .field-action-btn {
+      position: absolute;
+      right: 6px;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .scan-field-btn {
+      right: 6px;
+      transform: translateX(-76px);
+      background-color: #0f766e;
+      padding: 8px 10px;
+    }
+
+    .barcode-modal-card {
+      max-width: 420px;
+    }
+    #barcodeVideo {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+      background: #0f172a;
+      border-radius: var(--radius-md);
+    }
+    .barcode-scan-status {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      text-align: center;
+      line-height: 1.4;
+    }
+
+    .chips-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 8px;
+    }
+
+    .chip-item {
+      background-color: var(--chip-bg);
+      border: 1px solid var(--border-color);
+      padding: 10px;
+      border-radius: var(--radius-md);
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-main);
+      cursor: pointer;
+      text-align: center;
+      user-select: none;
+    }
+
+    .chip-item.selected {
+      background-color: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+    }
+
+    .sub-options-box {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 12px;
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .sub-options-box.active {
+      display: flex;
+    }
+
+    .sub-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .sub-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .micro-icon-btn {
+      background: none;
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      border-radius: 4px;
+      width: 20px;
+      height: 20px;
+      font-size: 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      background-color: var(--bg-surface);
+    }
+    .micro-icon-btn:hover {
+      color: var(--primary);
+      border-color: var(--primary);
+    }
+    .micro-icon-btn.delete-item:hover {
+      color: var(--accent-red);
+      border-color: var(--accent-red);
+    }
+
+    .checkbox-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      background: var(--bg-surface);
+      padding: 6px 8px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+    }
+
+    .checkbox-label span {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      flex: 1;
+    }
+
+    .checkbox-label input {
+      accent-color: var(--primary);
+      width: 15px;
+      height: 15px;
+    }
+
+    .billing-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .preview-card {
+      background-color: var(--wa-bg-color);
+      border-radius: var(--radius-md);
+      padding: 14px;
+    }
+
+    .wa-bubble-header {
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: #16a34a;
+      margin-bottom: 6px;
+    }
+
+    .wa-bubble-body {
+      font-family: monospace, sans-serif;
+      font-size: 0.78rem;
+      white-space: pre-wrap;
+      color: var(--wa-text-color);
+      line-height: 1.4;
+    }
+
+    .actions-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .btn-whatsapp {
+      background-color: #25d366;
+      color: #ffffff;
+      border: none;
+      padding: 14px;
+      border-radius: var(--radius-md);
+      font-size: 0.95rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    .btn-whatsapp:disabled, .btn-pdf:disabled { opacity: 0.4; cursor: not-allowed; }
+    .cloud-bar { display: none; justify-content: space-between; align-items: center; gap: 8px; padding: 8px 12px; margin-bottom: 12px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-sm); font-size: 0.78rem; }
+    .cloud-bar button { background: var(--primary); color: #fff; border: none; border-radius: var(--radius-sm); padding: 6px 10px; font-size: 0.75rem; font-weight: 700; cursor: pointer; }
+    .share-hint { font-size: 0.72rem; color: var(--text-muted); text-align: center; margin-top: -4px; }
+
+    .btn-pdf {
+      background-color: #dc2626;
+      color: #ffffff;
+      border: none;
+      padding: 14px;
+      border-radius: var(--radius-md);
+      font-size: 0.95rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-secondary {
+      flex: 1;
+      background-color: var(--bg-surface);
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+      padding: 10px;
+      border-radius: var(--radius-md);
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+
+    /* STRICT SINGLE A4 PAGE PDF WRAPPER CONTAINER STYLING */
+    #pdfWrapperContainer {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 794px;
+      background: #ffffff;
+      opacity: 0;
+      z-index: -999;
+      pointer-events: none;
+    }
+
+    #pdfTemplate {
+      background: #ffffff;
+      color: #0f172a;
+      width: 794px;
+      height: 1122px; /* Fixed exact A4 height layout equivalence to guarantee 1 page */
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      overflow: hidden;
+    }
+
+    .pdf-top-banner {
+      background-color: #38bdf8;
+      padding: 20px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .pdf-brand-box {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .pdf-brand-icon {
+      font-size: 26px;
+      background: #ffffff;
+      width: 44px; height: 44px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+    .pdf-brand-text h1 {
+      font-size: 18px;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: 0.05em;
+      margin: 0;
+    }
+    .pdf-invoice-title-area {
+      text-align: right;
+    }
+    .pdf-invoice-title-area h2 {
+      font-size: 20px;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: 0.05em;
+      margin: 0;
+      line-height: 1.1;
+    }
+    .pdf-invoice-title-area p {
+      font-size: 10px;
+      font-weight: 700;
+      color: #1e293b;
+      margin: 3px 0 0 0;
+    }
+    .pdf-company-contact-line {
+      font-size: 9.5px;
+      color: #0f172a;
+      margin-top: 2px;
+      font-weight: 600;
+    }
+
+    .pdf-meta-bar {
+      background-color: #334155;
+      color: #ffffff;
+      display: flex;
+      padding: 10px 30px;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 10.5px;
+    }
+    .pdf-meta-item {
+      display: flex;
+      gap: 8px;
+    }
+    .pdf-meta-item span {
+      color: #94a3b8;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .pdf-meta-item b {
+      color: #ffffff;
+      font-weight: 700;
+    }
+
+    .pdf-addresses-grid {
+      display: flex;
+      border-bottom: 1px solid #cbd5e1;
+    }
+    .pdf-addr-col {
+      flex: 1;
+      padding: 16px 24px;
+      border-right: 1px solid #cbd5e1;
+    }
+    .pdf-addr-col:last-child {
+      border-right: none;
+      background-color: #f8fafc;
+      flex: 0.85;
+    }
+    .pdf-addr-label {
+      font-size: 9.5px;
+      font-weight: 800;
+      color: #64748b;
+      letter-spacing: 0.08em;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+    }
+    .pdf-addr-name {
+      font-size: 13px;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 2px;
+    }
+    .pdf-addr-details {
+      font-size: 11px;
+      color: #475569;
+      line-height: 1.4;
+      font-weight: 500;
+    }
+    .pdf-amount-paid-display {
+      font-size: 22px;
+      font-weight: 800;
+      color: #16a34a;
+      margin-top: 4px;
+    }
+    .pdf-status-pill-wrap {
+      margin-top: 6px;
+    }
+    .pdf-status-pill {
+      display: inline-block;
+      font-size: 9.5px;
+      font-weight: 800;
+      letter-spacing: 0.03em;
+      padding: 2px 8px;
+      border-radius: 4px;
+      border: 1px solid currentColor;
+    }
+    .pdf-status-pill.paid { color: #16a34a; background: #f0fdf4; }
+    .pdf-status-pill.free { color: #d97706; background: #fef3c7; }
+
+    .pdf-service-breakdown-container {
+      padding: 14px 30px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      background: #f8fafc;
+      border-bottom: 1px solid #cbd5e1;
+    }
+    .pdf-service-card {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 10px 12px;
+    }
+    .pdf-service-card h4 {
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #2563eb;
+      margin-bottom: 4px;
+    }
+    .pdf-service-card p {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: #0f172a;
+      margin: 0;
+      line-height: 1.35;
+    }
+
+    .pdf-table-section {
+      padding: 14px 30px;
+    }
+    .pdf-items-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 12px;
+    }
+    .pdf-items-table th {
+      background-color: #ffffff;
+      color: #0f172a;
+      font-size: 10.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 8px 8px;
+      border-bottom: 2px solid #0f172a;
+      text-align: left;
+    }
+    .pdf-items-table th.right, .pdf-items-table td.right {
+      text-align: right;
+    }
+    .pdf-items-table th.center, .pdf-items-table td.center {
+      text-align: center;
+    }
+    .pdf-items-table td {
+      padding: 10px 8px;
+      font-size: 11.5px;
+      color: #1e293b;
+      border-bottom: 1px solid #e2e8f0;
+      font-weight: 600;
+      vertical-align: top;
+    }
+    .pdf-items-table td small {
+      display: block;
+      font-size: 10px;
+      color: #64748b;
+      font-weight: 500;
+      margin-top: 2px;
+    }
+
+    .pdf-summary-block {
+      width: 280px;
+      margin-left: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .pdf-sum-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11.5px;
+      color: #475569;
+      font-weight: 600;
+    }
+    .pdf-sum-row.grand {
+      font-size: 14.5px;
+      font-weight: 800;
+      color: #0f172a;
+      border-top: 2px solid #0f172a;
+      padding-top: 8px;
+      margin-top: 2px;
+    }
+
+    .pdf-extra-section {
+      padding: 0 30px 14px 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .pdf-notes-box {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 10px 12px;
+    }
+    .pdf-notes-box h4 {
+      font-size: 10.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #0f172a;
+      margin-bottom: 2px;
+    }
+    .pdf-notes-box p {
+      font-size: 11px;
+      color: #334155;
+      line-height: 1.35;
+      margin: 0;
+    }
+    .pdf-photos-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: flex-start;
+    }
+    .pdf-photos-row img {
+      width: 145px;
+      height: 115px;
+      object-fit: contain;
+      object-position: center;
+      background: #ffffff;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1;
+    }
+
+    .pdf-footer-section {
+      padding: 16px 30px 20px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      border-top: 1px solid #cbd5e1;
+      background: #f8fafc;
+    }
+    .pdf-footer-text p {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: #0f172a;
+      margin: 0 0 2px 0;
+    }
+    .pdf-footer-text small {
+      font-size: 9px;
+      color: #64748b;
+    }
+    
+    .pdf-signature-box {
+      text-align: center;
+    }
+    .pdf-sig-line {
+      width: 160px;
+      height: 1px;
+      background: #0f172a;
+      margin-bottom: 3px;
+    }
+    .pdf-digital-tag {
+      font-size: 8px;
+      font-weight: 700;
+      color: #16a34a;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 1px;
+    }
+    .pdf-signature-box {
+      position: relative;
+    }
+    /* Sits just above the footer border, out of normal flow, so the footer never grows */
+    .pdf-tech-photo-wrap {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: calc(100% + 22px);
+      display: flex;
+      justify-content: center;
+    }
+    .pdf-tech-photo {
+      display: block;
+      max-width: 170px;
+      max-height: 90px;
+      width: auto;
+      height: auto;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+    }
+    .pdf-tech-name {
+      font-size: 10.5px;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 1px;
+    }
+    .tech-photo-btn {
+      flex: 1;
+      background: var(--bg-card);
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+      padding: 10px 8px;
+      border-radius: var(--radius-sm);
+      font-size: 0.8rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+    }
+    .pdf-signature-box span {
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #64748b;
+      letter-spacing: 0.05em;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(0,0,0,0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 20px;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal-card {
+      background-color: var(--bg-surface);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 420px;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      gap: 14px;
+    }
+
+    /* Large, easy-to-scan complaint list */
+    #historyModal .modal-card {
+      max-width: 760px;
+      max-height: 94vh;
+      padding: 18px;
+    }
+    #historyModal .history-list {
+      min-height: 46vh;
+      max-height: 64vh;
+      gap: 12px;
+    }
+    #historyModal .history-item {
+      padding: 14px;
+      gap: 7px;
+      font-size: 0.9rem;
+      border-radius: 12px;
+    }
+    #historyModal .history-body {
+      gap: 6px;
+    }
+    #historyModal .cno-link {
+      font-size: 1rem;
+    }
+    #historyModal .history-item b {
+      font-size: 0.93rem;
+    }
+    #historyModal .history-item small {
+      font-size: 0.82rem;
+    }
+    #historyModal #historySearch {
+      min-height: 46px;
+      font-size: 0.95rem;
+    }
+    #historyModal .history-toolbar {
+      padding: 2px 0;
+    }
+    .history-share-options {
+      display: flex;
+      gap: 8px;
+      margin-top: 2px;
+    }
+    .history-share-btn {
+      flex: 1;
+      min-height: 40px;
+      padding: 8px 10px;
+      background: var(--bg-surface);
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      font-size: 0.76rem;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      cursor: pointer;
+    }
+    .history-share-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: #eff6ff;
+    }
+    .history-share-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+    .history-share-btn .share-icon {
+      font-size: 0.9rem;
+      line-height: 1;
+    }
+    @media (max-width: 600px) {
+      #historyModal {
+        padding: 8px;
+      }
+      #historyModal .modal-card {
+        max-width: 100%;
+        max-height: 96vh;
+        padding: 14px;
+        gap: 10px;
+      }
+      #historyModal .history-list {
+        min-height: 52vh;
+        max-height: 67vh;
+      }
+      #historyModal .history-item {
+        padding: 13px;
+        font-size: 0.92rem;
+      }
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 800;
+      font-size: 0.95rem;
+    }
+    .history-list {
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      flex: 1;
+    }
+    .history-item {
+      background: var(--bg-card);
+      padding: 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 0.78rem;
+    }
+
+    .history-row { display: flex; gap: 10px; align-items: flex-start; }
+    .history-row input[type="checkbox"], .hist-selall input { width: 20px; height: 20px; margin-top: 2px; accent-color: var(--primary); flex-shrink: 0; }
+    .history-body { flex: 1; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+    .history-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+    .hist-selall { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; font-weight: 600; cursor: pointer; }
+    .hist-del-btn { background: var(--accent-red-bg); color: var(--accent-red); border: 1px solid var(--accent-red); padding: 8px 12px; border-radius: var(--radius-sm); font-size: 0.78rem; font-weight: 700; cursor: pointer; }
+    .hist-del-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .cno-link { color: var(--primary); font-weight: 800; text-decoration: underline; }
+    .detail-pre { white-space: pre-wrap; word-break: break-word; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 10px; font-size: 0.75rem; font-family: inherit; margin: 0; }
+
+    .toast {
+      position: fixed;
+      bottom: 24px; left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background-color: #0f172a; color: #ffffff;
+      padding: 10px 20px; border-radius: var(--radius-full);
+      font-size: 0.8rem; font-weight: 600; z-index: 200;
+      opacity: 0; transition: all 0.3s ease; pointer-events: none;
+      white-space: nowrap;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+  
+    #cloudBar { margin: 0; padding: 5px 8px; font-size: 0.72rem; flex-wrap: wrap; gap: 4px; }
+    #cloudBar button { padding: 4px 8px; font-size: 0.7rem; }
+    #cloudDot { position: absolute; top: 4px; right: 4px; width: 9px; height: 9px; border-radius: 50%; background: #94a3b8; border: 1.5px solid #fff; }
+    /* ---- Sync gate ---- */
+    body.locked { overflow: hidden; }
+    #syncGate { position: fixed; inset: 0; z-index: 99999; display: none; align-items: center; justify-content: center; padding: 20px; background: var(--bg-body, #0f172a); }
+    #syncGate .sg-card { width: 100%; max-width: 380px; background: var(--bg-card, #fff); border: 1px solid var(--border-color, #ddd); border-radius: 16px; padding: 24px 20px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,.25); }
+    #syncGate .sg-icon { font-size: 2.4rem; }
+    #syncGate h2 { margin: 6px 0 4px; font-size: 1.2rem; }
+    #syncGate #sgMsg { font-size: .85rem; margin: 0 0 14px; line-height: 1.4; color: var(--text-muted, #64748b); }
+    #syncGate #sgMsg.err { color: #dc2626; font-weight: 600; }
+    #syncGate input { width: 100%; box-sizing: border-box; padding: 12px; margin-bottom: 10px; font-size: 1rem; border: 1px solid var(--border-color, #ccc); border-radius: 10px; background: transparent; color: inherit; text-align: center; }
+    #syncGate #sgUrl { font-size: .72rem; text-align: left; }
+    #syncGate button { width: 100%; padding: 13px; border: none; border-radius: 10px; font-size: 1rem; font-weight: 700; cursor: pointer; background: var(--primary, #2563eb); color: #fff; }
+    #syncGate button:disabled { opacity: .6; cursor: wait; }
+    #syncGate button.sg-sec { background: transparent; color: var(--text-muted, #64748b); font-size: .78rem; font-weight: 600; margin-top: 6px; padding: 8px; }
+  </style>
+</head>
+<body>
+  <div id="syncGate">
+    <div class="sg-card">
+      <div class="sg-icon">☁️</div>
+      <h2>Team Sync</h2>
+      <p id="sgMsg">Enter the team PIN to sync and open the app.</p>
+      <input id="sgPin" type="password" placeholder="Team PIN" autocomplete="off">
+      <button id="sgGo" type="button">Sync &amp; Open</button>
+      <button id="sgSkip" class="sg-sec" type="button">Continue without sync</button>
+    </div>
+  </div>
+
+
+  <div class="app-container">
+    <header class="header">
+      <div class="brand-title">
+        <svg viewBox="0 0 24 24"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+        <span>SmartChoice Tech Portal</span>
+      </div>
+      <div class="header-actions">
+        <button class="icon-btn" id="historyBtn" type="button" title="Saved Jobs" style="position:relative;">📂<span id="cloudDot"></span></button>
+      </div>
+    </header>
+
+    <nav class="tabs-nav">
+      <button class="tab-btn active-complaint" id="complaintTabBtn" type="button">Complaint</button>
+      <button class="tab-btn" id="installTabBtn" type="button">New Installation</button>
+    </nav>
+
+    <main class="form-body">
+      
+      <!-- COMPLAINT TAB -->
+      <div class="tab-content active" id="complaintTab">
+        <div class="form-group">
+          <label class="label">Date</label>
+          <div class="input-wrapper">
+            <input type="date" id="cDate" class="input-field">
+            <button class="field-action-btn" id="cSetTodayBtn" type="button">Today</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="label">Customer Name</label>
+          <div class="input-wrapper">
+            <input type="text" id="cName" class="input-field" placeholder="Enter customer name">
+            <button class="field-action-btn" id="cPickContactBtn" type="button">Contacts</button>
+            <button class="field-action-btn scan-field-btn" id="cScanBarcodeBtn" type="button" title="Scan barcode">▣ Scan</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="label">Mobile Number</label>
+          <input type="tel" id="cPhone" class="input-field" placeholder="10-digit mobile number">
+        </div>
+
+        <div class="form-group">
+          <label class="label">Diagnosis / Services</label>
+          <div class="chips-grid" id="problemChips">
+            <div class="chip-item" data-value="No Water Flow / Blockage">No Water Flow</div>
+            <div class="chip-item" data-value="Bad Taste / Smell">Bad Taste / Smell</div>
+            <div class="chip-item" data-value="High TDS / Hard Water">High TDS</div>
+            <div class="chip-item" data-value="Water Leakage / Overflow">Leakage / Overflow</div>
+            <div class="chip-item" data-value="Power / Machine Not Working">Power Issue</div>
+            <div class="chip-item" data-value="Periodic Service">Periodic Service</div>
+          </div>
+        </div>
+
+        <div class="sub-options-box" id="subOptionsBox">
+          <div class="sub-title-row">
+            <div class="sub-title">Spare Parts Changed Details:</div>
+            <button type="button" class="micro-icon-btn" id="addPartCustomBtn" title="Add custom part">+</button>
+          </div>
+          <div class="checkbox-grid" id="partsCheckboxContainer"></div>
+        </div>
+
+        <div class="billing-box">
+          <div class="label" style="color:var(--primary);">Billing & Payment Options</div>
+          
+          <div class="form-group">
+            <label class="label" style="font-size:0.75rem;">Payment Status</label>
+            <div class="chips-grid" id="payTypeChips">
+              <div class="chip-item" data-type="Paid (Customer)">Paid (Customer)</div>
+              <div class="chip-item selected" data-type="Free (Company Paid)">Free (Company Paid)</div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="label" style="font-size:0.75rem;">Service Charge (₹)</label>
+            <input type="number" id="cServiceCharge" class="input-field" placeholder="e.g. 300 or 0" value="0">
+          </div>
+
+          <div class="form-group">
+            <label class="label" style="font-size:0.75rem;">Spare Parts Total Cost (₹)</label>
+            <input type="number" id="cPartsCost" class="input-field" placeholder="e.g. 600 or 0" value="0">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="label">Technician Notes</label>
+          <div class="chips-grid" id="notesPresetChips">
+            <div class="chip-item" data-note="General service completed">General service completed</div>
+            <div class="chip-item" data-note="Leakage fixed">Leakage fixed</div>
+            <div class="chip-item" data-note="Water quality tested - OK">Water quality tested - OK</div>
+            <div class="chip-item" data-note="Next service due in 6 months">Next service due in 6 months</div>
+            <div class="chip-item" data-note="Customer satisfied with service">Customer satisfied with service</div>
+          </div>
+          <input type="text" id="cNotes" class="input-field" placeholder="Tap a preset above, or type your own note..." style="margin-top: 8px;">
+        </div>
+      </div>
+
+      <!-- INSTALLATION TAB -->
+      <div class="tab-content" id="installTab">
+        <div class="form-group">
+          <label class="label">Subscription Package</label>
+          <div class="chips-grid" id="installCatChips">
+            <div class="chip-item selected" data-cat="Standard (₹400)">Standard (₹400)</div>
+            <div class="chip-item" data-cat="Prime (₹500)">Prime (₹500)</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="label">Machine Model</label>
+          <div class="chips-grid" id="machineChips">
+            <div class="chip-item selected" data-model="Lexpure Cloud9">Lexpure Cloud9</div>
+            <div class="chip-item" data-model="Lexpure AI Aqua">Lexpure AI Aqua</div>
+            <div class="chip-item" data-model="Lexpure Curvv">Lexpure Curvv</div>
+            <div class="chip-item" data-model="Lexpure Era">Lexpure Era</div>
+            <div class="chip-item" data-model="Lexpure SKY">Lexpure SKY</div>
+            <div class="chip-item" data-model="Lexpure Swift">Lexpure Swift</div>
+            <div class="chip-item" data-model="Aqua Grand">Aqua Grand</div>
+            <div class="chip-item" data-model="BlueMount">BlueMount</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="label">Machine Colour <span style="font-weight:400; color:var(--text-muted);">(optional)</span></label>
+          <div class="chips-grid" id="colourChips">
+            <div class="chip-item" data-colour="White">White</div>
+            <div class="chip-item" data-colour="Black">Black</div>
+            <div class="chip-item" data-colour="__custom__">Custom</div>
+          </div>
+          <input type="text" id="iColourCustom" class="input-field" placeholder="Enter custom colour name" style="display: none; margin-top: 8px;">
+        </div>
+
+        <div class="form-group">
+          <label class="label">Customer Name</label>
+          <div class="input-wrapper">
+            <input type="text" id="iName" class="input-field" placeholder="Enter customer name">
+            <button class="field-action-btn" id="iPickContactBtn" type="button">Contacts</button>
+            <button class="field-action-btn scan-field-btn" id="iScanBarcodeBtn" type="button" title="Scan barcode">▣ Scan</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="label">Mobile Number</label>
+          <input type="tel" id="iPhone" class="input-field" placeholder="10-digit mobile number">
+        </div>
+
+        <div class="form-group">
+          <label class="label">Installation Date</label>
+          <div class="input-wrapper">
+            <input type="date" id="iDate" class="input-field">
+            <button class="field-action-btn" id="iSetTodayBtn" type="button">Today</button>
+          </div>
+        </div>
+
+        <div class="billing-box">
+          <div class="label" style="color:var(--primary);">Payment Details</div>
+
+          <div class="form-group">
+            <label class="label" style="font-size:0.75rem;">Payment Method</label>
+            <div class="chips-grid" id="installPayMethodChips">
+              <div class="chip-item selected" data-method="UPI">UPI</div>
+              <div class="chip-item" data-method="Cash">Cash</div>
+              <div class="chip-item" data-method="Credit Card">Credit Card</div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="label" style="font-size:0.75rem;">Payment Amount (₹)</label>
+            <input type="number" id="iPaymentAmount" class="input-field" placeholder="e.g. 4999">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="label">Full Address / Location</label>
+          <textarea id="iAddress" class="input-field" placeholder="House no, Street, Landmark..."></textarea>
+          <div class="input-wrapper" style="margin-top: 8px;">
+            <button class="field-action-btn" id="iGetGpsBtn" type="button" style="width: 100%;">📍 Add Current GPS Location</button>
+          </div>
+          <div id="iGpsStatus" style="display: none; font-size: 0.75rem; color: var(--text-muted); margin-top: 6px;"></div>
+        </div>
+      </div>
+
+      <div class="form-group" style="padding: 0 18px;">
+        <label class="label">Work Proof</label>
+        <div class="input-wrapper" style="flex-direction: column; align-items: stretch; gap: 8px;">
+          <input type="file" id="jobPhoto" accept="image/*" multiple class="input-field" style="padding: 8px;">
+          <div id="imagePreviewContainer" style="display: none;">
+            <div id="photoThumbGrid" style="display: flex; flex-wrap: wrap; gap: 8px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group" style="padding: 0 18px;">
+        <label class="label">Technician Photo <span style="font-weight:500; color: var(--text-muted);">(shown at signature)</span></label>
+        <div class="input-wrapper" style="flex-direction: column; align-items: stretch; gap: 8px;">
+          <input type="text" id="techName" class="input-field" placeholder="Technician name (optional)">
+          <div style="display: flex; gap: 8px;">
+            <button type="button" class="tech-photo-btn" id="techCameraBtn">📷 Take Photo</button>
+            <button type="button" class="tech-photo-btn" id="techGalleryBtn">🖼️ Gallery</button>
+          </div>
+          <input type="file" id="techPhotoCamera" accept="image/*" capture="user" style="display: none;">
+          <input type="file" id="techPhotoGallery" accept="image/*" style="display: none;">
+          <div id="techPhotoPreviewRow" style="display: none; align-items: center; gap: 12px;">
+            <div style="position: relative; display: inline-block; flex-shrink: 0;">
+              <img id="techPhotoThumb" alt="Technician" style="display: block; max-width: 140px; max-height: 80px; width: auto; height: auto; border-radius: 4px; border: 1px solid var(--border-color); background: #fff;">
+              <button type="button" id="techPhotoRemoveBtn" style="position: absolute; top: -4px; right: -4px; background: rgba(0,0,0,0.7); color: white; border: none; border-radius: 50%; width: 22px; height: 22px; font-size: 11px; cursor: pointer;">✕</button>
+            </div>
+            <label style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--text-main); cursor: pointer;">
+              <input type="checkbox" id="techPhotoShow" checked> Show on PDF report
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <section class="preview-section">
+        <label class="label" style="margin-bottom:6px;">WhatsApp Message Preview</label>
+        <div class="preview-card">
+          <div class="wa-bubble-header" id="waHeaderTitle">SERVICE & REPAIR REPORT</div>
+          <div class="wa-bubble-body" id="waPreviewText">Loading preview...</div>
+        </div>
+      </section>
+
+      <section class="actions-group">
+        <button class="btn-whatsapp" id="sendWhatsappBtn" type="button" disabled>Send via WhatsApp Text</button>
+        <button class="btn-pdf" id="generatePdfBtn" type="button" disabled>Share PDF Report (Select App)</button>
+        <div class="share-hint" id="shareHint">Submit the job to enable WhatsApp and PDF sharing</div>
+        <div class="btn-row">
+          <button class="btn-secondary" id="saveJobBtn" type="button">Submit Job</button>
+          <button class="btn-secondary" id="resetFormBtn" type="button" style="color:var(--accent-red)">Reset Form</button>
+          <button class="btn-secondary" id="copyMsgBtn" type="button">Copy Text</button>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- OFF-SCREEN SINGLE PAGE A4 PDF WRAPPER CONTAINER -->
+  <div id="pdfWrapperContainer">
+    <div id="pdfTemplate">
+      <div>
+        <div class="pdf-top-banner">
+          <div class="pdf-brand-box">
+            <div class="pdf-brand-icon">💧</div>
+            <div class="pdf-brand-text">
+              <h1>SMARTCHOICE</h1>
+              <div class="pdf-company-contact-line">Water Purifier Sales &amp; Service Expert</div>
+            </div>
+          </div>
+          <div class="pdf-invoice-title-area">
+            <h2 id="pdfDocMainTitle">SERVICE COMPLETION REPORT</h2>
+            <p id="pdfSubCategoryLabel">Work Completed &amp; Service Details</p>
+          </div>
+        </div>
+
+        <div class="pdf-meta-bar">
+          <div class="pdf-meta-item"><span>Invoice No:</span> <b id="pdfReportId">SC10023</b></div>
+          <div class="pdf-meta-item"><span>Issue Date:</span> <b id="pdfIssueDate">-</b></div>
+          <div class="pdf-meta-item"><span>Job Type:</span> <b id="pdfJobTypeBadge">-</b></div>
+        </div>
+
+        <div class="pdf-addresses-grid">
+          <div class="pdf-addr-col">
+            <div class="pdf-addr-label">From</div>
+            <div class="pdf-addr-name">SmartChoice Service Tech</div>
+            <div class="pdf-addr-details">
+              Authorized Partner<br>
+              Support: +91 9540-69-3344<br>
+              support@smartchoice.in
+            </div>
+          </div>
+          <div class="pdf-addr-col">
+            <div class="pdf-addr-label">To (Customer)</div>
+            <div class="pdf-addr-name" id="pdfCustName">-</div>
+            <div class="pdf-addr-details" id="pdfCustContactInfo">-</div>
+            <div class="pdf-addr-details" id="pdfCustAddressBlock" style="margin-top: 2px; display: none;">-</div>
+          </div>
+          <div class="pdf-addr-col">
+            <div class="pdf-addr-label">Report Status</div>
+            <div class="pdf-amount-paid-display" style="font-size:18px; color:#2563eb;">COMPLETED</div>
+            <div class="pdf-status-pill-wrap">
+              <span class="pdf-status-pill paid" id="pdfStatusPill">Service Completed</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="pdf-service-breakdown-container">
+          <div class="pdf-service-card">
+            <h4>Issue / Service Request</h4>
+            <p id="pdfIssueDiagnosedVal">General Maintenance Check</p>
+          </div>
+          <div class="pdf-service-card">
+            <h4>Work Completed</h4>
+            <p id="pdfServicePerformedVal">Inspection &amp; Testing Completed</p>
+          </div>
+        </div>
+
+        <div class="pdf-table-section">
+          <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:#0f172a;margin-bottom:7px;">Service Completion Details</div>
+          <table class="pdf-items-table">
+            <thead id="pdfTableHead">
+              <tr>
+                <th style="width: 68%;">Work / Part</th>
+                <th class="center" style="width: 14%;">Qty</th>
+                <th class="center" style="width: 18%;">Status</th>
+              </tr>
+            </thead>
+            <tbody id="pdfTableItemsBody"></tbody>
+          </table>
+        </div>
+
+        <div class="pdf-extra-section">
+          <div id="pdfPhotoSection" style="display: none;">
+            <div style="font-size: 10px; font-weight: 800; color: #0f172a; text-transform: uppercase; margin-bottom: 4px; letter-spacing: 0.05em;">📷 Work Proof Photos</div>
+            <div class="pdf-photos-row" id="pdfPhotoFrame"></div>
+          </div>
+          <div class="pdf-notes-box" id="pdfNotesContainer">
+            <h4>Technician Notes</h4>
+            <p id="pdfNotesText">-</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="pdf-footer-section">
+        <div class="pdf-footer-text">
+          <p>Thank you for choosing SmartChoice!</p>
+          <small>This is a system-generated service completion report.</small>
+        </div>
+        <div class="pdf-signature-box">
+          <div class="pdf-tech-photo-wrap" id="pdfTechPhotoWrap" style="display: none;">
+            <img class="pdf-tech-photo" id="pdfTechPhoto" alt="">
+          </div>
+          <div class="pdf-sig-line"></div>
+          <div class="pdf-digital-tag">✓ Digitally Verified &amp; Signed</div>
+          <div class="pdf-tech-name" id="pdfTechName" style="display: none;"></div>
+          <span>Technician Signature</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HISTORY MODAL -->
+  <div class="modal-overlay" id="historyModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span>Saved Job History</span>
+        <button class="icon-btn" id="closeHistoryModal" type="button" style="background:var(--border-color); color:var(--text-main);">✕</button>
+      </div>
+      <div id="historyCountLine" style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: -6px;"></div>
+      <div class="cloud-bar" id="cloudBar"></div>
+      <input type="search" id="historySearch" class="input-field" placeholder="🔍 Search name, mobile or technician" autocomplete="off">
+      <div class="history-toolbar">
+        <label class="hist-selall"><input type="checkbox" id="historySelectAll"> Select all</label>
+        <button type="button" class="hist-del-btn" id="historyDeleteBtn" disabled>🗑 Delete selected (0)</button>
+      </div>
+      <div class="history-list" id="historyListContainer"></div>
+      <div class="history-share-options" aria-label="Share Job List">
+        <button class="history-share-btn" id="shareSelectedHistoryBtn" type="button" title="Share only the selected jobs">
+          <span class="share-icon">👤</span> Share Selected
+        </button>
+        <button class="history-share-btn" id="shareAllHistoryBtn" type="button" title="Share all saved jobs">
+          <span class="share-icon">📋</span> Share All
+        </button>
+      </div>
+      <button class="btn-secondary" id="restoreBackupBtn" type="button">📥 Restore Backup</button>
+      <input type="file" id="restoreBackupInput" accept=".txt,.json,text/plain,application/json" style="display: none;">
+      <button class="btn-secondary" id="clearHistoryBtn" type="button" style="color:var(--accent-red)">Clear History</button>
+    </div>
+  </div>
+
+  <!-- JOB DETAIL MODAL -->
+  <div class="modal-overlay" id="jobDetailModal" style="z-index: 110;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span id="jobDetailTitle">Job Record</span>
+        <button class="icon-btn" id="closeJobDetailModal" type="button" style="background:var(--border-color); color:var(--text-main);">✕</button>
+      </div>
+      <div class="history-list" id="jobDetailBody"></div>
+      <div class="btn-row">
+        <button class="btn-secondary" id="jobDetailCopyBtn" type="button">📋 Copy Message</button>
+        <button class="btn-secondary" id="jobDetailCloseBtn" type="button">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MANUAL COPY FALLBACK MODAL -->
+  <div class="modal-overlay" id="manualCopyModal" style="z-index: 110;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span>📋 Copy Text</span>
+        <button class="icon-btn" id="closeManualCopyModal" type="button" style="background:var(--border-color); color:var(--text-main);">✕</button>
+      </div>
+      <div style="font-size: 0.8rem; color: var(--text-muted);">Tap <b>Select All</b>, then choose <b>Copy</b> from the menu and paste it into OneNote.</div>
+      <textarea id="manualCopyArea" class="input-field" readonly style="flex: 1; min-height: 200px; font-size: 0.8rem; white-space: pre; overflow: auto;"></textarea>
+      <button class="btn-whatsapp" id="manualCopySelectBtn" type="button" style="background-color: #2563eb;">Select All</button>
+    </div>
+  </div>
+
+  <!-- PDF PREVIEW & NATIVE SHARE MODAL -->
+  <div class="modal-overlay" id="pdfPreviewModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span>📄 Service Completion Report Preview</span>
+        <button class="icon-btn" id="closePdfPreviewModal" type="button" style="background:var(--border-color); color:var(--text-main);">✕</button>
+      </div>
+      <div style="overflow-y: auto; flex: 1; max-height: 260px; border: 1px solid var(--border-color); border-radius: var(--radius-sm); background: #f1f5f9;">
+        <img id="pdfPreviewImg" src="" alt="PDF Preview" style="width: 100%; display: block;">
+      </div>
+      <button class="btn-whatsapp" id="confirmShareBtn" type="button" style="background-color: #2563eb;">📤 Share PDF (WhatsApp, Email, Drive & More)</button>
+      <button class="btn-secondary" id="downloadInsteadBtn" type="button">⬇ Download PDF File</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toastNotification">Done!</div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // ---- CLOUD SETTINGS: paste your own values (see setup steps) ----
+      const CLOUD = { url: 'https://script.google.com/macros/s/AKfycbziSDADM_3bnFpCJUVgBgOJXf1SQtwQ-7SWBvv1j5u8xyczJ21shMFD1A5iuGUIDEHq/exec' };   // Apps Script Web App link (…/exec) - entered on the sync screen
+      // Short code unique to this phone, so complaint numbers never clash between technicians
+      const TECH_CODE = (() => {
+        try {
+          let c = localStorage.getItem('ro_tech_code');
+          if (!c) { c = Array.from({ length: 3 }, () => 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.floor(Math.random() * 32)]).join(''); localStorage.setItem('ro_tech_code', c); }
+          return c;
+        } catch (e) { return 'XXX'; }
+      })();
+      let currentTab = 'complaint';
+      let currentJobId = null;   // complaint number of the submitted job
+      let submittedMsg = '';     // message text as it was when submitted
+      let selectedProblems = [];
+      let selectedParts = new Set();
+      let customPartsList = []; 
+
+      function getProblemText() {
+        return selectedProblems.join(', ');
+      }
+      let paymentType = 'Free (Company Paid)';
+      let installCategory = 'Standard (₹400)';
+      let machineModel = 'Lexpure Cloud9';
+      let machineColour = '';
+      let installPaymentMethod = 'UPI';
+      let installGpsLink = '';
+      let installGpsCoords = '';
+      let capturedImages = []; 
+
+      const baseProblemPartsMapping = {
+        "No Water Flow / Blockage": ["Spun Filter", "Sediment Filter", "Pre-Carbon Filter", "RO Membrane", "Booster Pump", "SMPS Adapter", "Pipe Change"],
+        "Bad Taste / Smell": ["Active Carbon Filter", "Mineral Cartridge", "Post Carbon", "Tank Wash", "Pipe Change"],
+        "High TDS / Hard Water": ["RO Membrane", "Flow Restrictor (FR)", "TDS Adjuster Valve", "Spun Filter"],
+        "Water Leakage / Overflow": ["Float Valve", "Solenoid Valve (SV)", "Housing O-Ring", "Quick-Connect Fittings", "Pipe Change", "Tank Wash"],
+        "Power / Machine Not Working": ["SMPS Power Supply", "Float Switch", "Booster Pump", "AC Power Cord"],
+        "Periodic Service": ["Spun Filter", "Sediment Filter", "Active Carbon Filter", "RO Membrane", "Mineral Cartridge", "Flow Restrictor (FR)", "Pipe Change", "Tank Wash"]
+      };
+
+      // Combines parts of every selected diagnosis (plus custom parts) and hides duplicates
+      function getEffectiveParts() {
+        if (selectedProblems.length === 0) return [];
+        const seen = new Set();
+        const result = [];
+        const all = [];
+        selectedProblems.forEach(d => all.push(...(baseProblemPartsMapping[d] || [])));
+        all.push(...customPartsList);
+        all.forEach(part => {
+          const key = part.trim().toLowerCase();
+          if (!seen.has(key)) {
+            seen.add(key);
+            result.push(part);
+          }
+        });
+        return result;
+      }
+
+      const complaintTabBtn = document.getElementById('complaintTabBtn');
+      const installTabBtn = document.getElementById('installTabBtn');
+      const complaintTab = document.getElementById('complaintTab');
+      const installTab = document.getElementById('installTab');
+      const waHeaderTitle = document.getElementById('waHeaderTitle');
+
+      complaintTabBtn.addEventListener('click', () => {
+        currentTab = 'complaint';
+        complaintTabBtn.className = 'tab-btn active-complaint';
+        installTabBtn.className = 'tab-btn';
+        complaintTab.classList.add('active');
+        installTab.classList.remove('active');
+        waHeaderTitle.textContent = 'SERVICE & REPAIR REPORT';
+        updatePreview();
+      });
+
+      installTabBtn.addEventListener('click', () => {
+        currentTab = 'install';
+        installTabBtn.className = 'tab-btn active-installation';
+        complaintTabBtn.className = 'tab-btn';
+        installTab.classList.add('active');
+        complaintTab.classList.remove('active');
+        waHeaderTitle.textContent = 'NEW RO INSTALLATION DONE';
+        updatePreview();
+      });
+
+      document.getElementById('cSetTodayBtn').addEventListener('click', () => {
+        document.getElementById('cDate').valueAsDate = new Date();
+        updatePreview();
+      });
+      document.getElementById('iSetTodayBtn').addEventListener('click', () => {
+        document.getElementById('iDate').valueAsDate = new Date();
+        updatePreview();
+      });
+
+      const jobPhotoInput = document.getElementById('jobPhoto');
+      const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+      const photoThumbGrid = document.getElementById('photoThumbGrid');
+
+      function renderPhotoThumbnails() {
+        photoThumbGrid.innerHTML = '';
+        if (capturedImages.length === 0) {
+          imagePreviewContainer.style.display = 'none';
+          return;
+        }
+        imagePreviewContainer.style.display = 'block';
+        capturedImages.forEach((src, idx) => {
+          const wrap = document.createElement('div');
+          wrap.style.cssText = 'position: relative; width: 84px; height: 84px; flex-shrink: 0;';
+
+          const img = document.createElement('img');
+          img.src = src;
+          img.alt = 'Proof Preview';
+          img.style.cssText = 'width: 100%; height: 100%; object-fit: cover; border-radius: 8px; border: 1px solid var(--border-color);';
+
+          const removeBtn = document.createElement('button');
+          removeBtn.type = 'button';
+          removeBtn.textContent = '✕';
+          removeBtn.style.cssText = 'position: absolute; top: -6px; right: -6px; background: rgba(0,0,0,0.7); color: white; border: none; border-radius: 50%; width: 22px; height: 22px; font-size: 11px; cursor: pointer;';
+          removeBtn.addEventListener('click', () => {
+            capturedImages.splice(idx, 1);
+            renderPhotoThumbnails();
+          });
+
+          wrap.appendChild(img);
+          wrap.appendChild(removeBtn);
+          photoThumbGrid.appendChild(wrap);
+        });
+      }
+
+      jobPhotoInput.addEventListener('change', function(e) {
+        const files = Array.from(e.target.files || []);
+        if (files.length === 0) return;
+        let pending = files.length;
+        files.forEach(file => {
+          const reader = new FileReader();
+          reader.onload = function(event) {
+            capturedImages.push(event.target.result);
+            pending--;
+            if (pending === 0) {
+              renderPhotoThumbnails();
+              jobPhotoInput.value = '';
+            }
+          };
+          reader.readAsDataURL(file);
+        });
+      });
+
+      // ---- Technician photo (saved on this device, reused for every report) ----
+      let techPhoto = '';
+      const techNameInput = document.getElementById('techName');
+      const techPhotoShow = document.getElementById('techPhotoShow');
+      const techPhotoThumb = document.getElementById('techPhotoThumb');
+      const techPhotoPreviewRow = document.getElementById('techPhotoPreviewRow');
+
+      function saveTechProfile() {
+        try {
+          localStorage.setItem('ro_tech_profile', JSON.stringify({
+            photo: techPhoto,
+            name: techNameInput.value,
+            show: techPhotoShow.checked
+          }));
+        } catch (e) { /* storage full or blocked - ignore */ }
+      }
+
+      function renderTechPhoto() {
+        if (techPhoto) {
+          techPhotoThumb.src = techPhoto;
+          techPhotoPreviewRow.style.display = 'flex';
+        } else {
+          techPhotoPreviewRow.style.display = 'none';
+        }
+      }
+
+      function loadTechPhotoFile(file) {
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          const img = new Image();
+          img.onload = () => {
+            // Keep the full image (no cropping); just shrink it so it stays light
+            const maxSide = 500;
+            const ratio = Math.min(1, maxSide / Math.max(img.width, img.height));
+            const canvas = document.createElement('canvas');
+            canvas.width = Math.round(img.width * ratio);
+            canvas.height = Math.round(img.height * ratio);
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            techPhoto = canvas.toDataURL('image/jpeg', 0.85);
+            techPhotoShow.checked = true;
+            renderTechPhoto();
+            saveTechProfile();
+            showToast('Technician photo added');
+          };
+          img.src = ev.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+
+      ['techPhotoCamera', 'techPhotoGallery'].forEach(id => {
+        const input = document.getElementById(id);
+        input.addEventListener('change', (e) => {
+          loadTechPhotoFile(e.target.files && e.target.files[0]);
+          input.value = '';
+        });
+      });
+      document.getElementById('techCameraBtn').addEventListener('click', () => document.getElementById('techPhotoCamera').click());
+      document.getElementById('techGalleryBtn').addEventListener('click', () => document.getElementById('techPhotoGallery').click());
+      document.getElementById('techPhotoRemoveBtn').addEventListener('click', () => {
+        techPhoto = '';
+        renderTechPhoto();
+        saveTechProfile();
+      });
+      techNameInput.addEventListener('input', saveTechProfile);
+      techPhotoShow.addEventListener('change', saveTechProfile);
+
+      try {
+        const saved = JSON.parse(localStorage.getItem('ro_tech_profile') || 'null');
+        if (saved) {
+          techPhoto = saved.photo || '';
+          techNameInput.value = saved.name || '';
+          techPhotoShow.checked = saved.show !== false;
+          renderTechPhoto();
+        }
+      } catch (e) { /* ignore corrupt data */ }
+
+      function renderPartsCheckboxes() {
+        partsContainer.innerHTML = '';
+        const subParts = getEffectiveParts();
+        if (subParts.length > 0) {
+          subOptionsBox.classList.add('active');
+          subParts.forEach(part => {
+            const label = document.createElement('label');
+            label.className = 'checkbox-label';
+            
+            const span = document.createElement('span');
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.value = part;
+            checkbox.checked = selectedParts.has(part);
+
+            checkbox.addEventListener('change', (ev) => {
+              if (ev.target.checked) selectedParts.add(part);
+              else selectedParts.delete(part);
+              updatePreview();
+            });
+
+            span.appendChild(checkbox);
+            span.appendChild(document.createTextNode(' ' + part));
+            label.appendChild(span);
+
+            const isCustom = customPartsList.includes(part);
+            if (isCustom) {
+              const delBtn = document.createElement('button');
+              delBtn.type = 'button';
+              delBtn.className = 'micro-icon-btn delete-item';
+              delBtn.textContent = '✕';
+              delBtn.title = 'Remove custom part';
+              delBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const index = customPartsList.indexOf(part);
+                if (index > -1) customPartsList.splice(index, 1);
+                selectedParts.delete(part);
+                renderPartsCheckboxes();
+                updatePreview();
+              });
+              label.appendChild(delBtn);
+            }
+
+            partsContainer.appendChild(label);
+          });
+        } else {
+          subOptionsBox.classList.remove('active');
+        }
+      }
+
+      const problemChips = document.getElementById('problemChips');
+      const subOptionsBox = document.getElementById('subOptionsBox');
+      const partsContainer = document.getElementById('partsCheckboxContainer');
+
+      problemChips.addEventListener('click', (e) => {
+        const chip = e.target.closest('.chip-item');
+        if (!chip) return;
+        
+        const value = chip.getAttribute('data-value');
+        const idx = selectedProblems.indexOf(value);
+        if (idx > -1) {
+          selectedProblems.splice(idx, 1);
+          chip.classList.remove('selected');
+        } else {
+          selectedProblems.push(value);
+          chip.classList.add('selected');
+        }
+
+        // Keep only ticked parts that are still offered by the remaining diagnoses
+        const stillAvailable = new Set(getEffectiveParts().map(pt => pt.trim().toLowerCase()));
+        Array.from(selectedParts).forEach(pt => {
+          if (!stillAvailable.has(pt.trim().toLowerCase())) selectedParts.delete(pt);
+        });
+
+        renderPartsCheckboxes();
+        updatePreview();
+      });
+
+      document.getElementById('addPartCustomBtn').addEventListener('click', () => {
+        if (selectedProblems.length === 0) {
+          showToast('Please select a diagnosis first.');
+          return;
+        }
+        const customPartName = prompt('Enter spare part name:');
+        if (!customPartName || !customPartName.trim()) return;
+        const trimmed = customPartName.trim();
+
+        const existing = getEffectiveParts().find(pt => pt.trim().toLowerCase() === trimmed.toLowerCase());
+        if (existing) {
+          selectedParts.add(existing);
+          renderPartsCheckboxes();
+          updatePreview();
+          showToast('Part already in list - selected it.');
+          return;
+        }
+        customPartsList.push(trimmed);
+        selectedParts.add(trimmed);
+        renderPartsCheckboxes();
+        updatePreview();
+        showToast('Spare part added!');
+      });
+
+      // Company Paid -> amounts default to 0. Customer Paid -> amounts always start blank.
+      function applyPaymentDefaults() {
+        const isCustomerPaid = paymentType.toLowerCase().includes('paid') && !paymentType.toLowerCase().includes('free');
+        const sc = document.getElementById('cServiceCharge');
+        const pc = document.getElementById('cPartsCost');
+        sc.value = isCustomerPaid ? '' : '0';
+        pc.value = isCustomerPaid ? '' : '0';
+        sc.placeholder = isCustomerPaid ? 'Enter service charge' : '0';
+        pc.placeholder = isCustomerPaid ? 'Enter spare parts cost' : '0';
+      }
+
+      document.getElementById('payTypeChips').addEventListener('click', (e) => {
+        const chip = e.target.closest('.chip-item');
+        if (!chip) return;
+        document.querySelectorAll('#payTypeChips .chip-item').forEach(c => c.classList.remove('selected'));
+        chip.classList.add('selected');
+        paymentType = chip.getAttribute('data-type');
+        applyPaymentDefaults();
+        updatePreview();
+      });
+
+      document.getElementById('installCatChips').addEventListener('click', (e) => {
+        const chip = e.target.closest('.chip-item');
+        if(!chip) return;
+        document.querySelectorAll('#installCatChips .chip-item').forEach(c => c.classList.remove('selected'));
+        chip.classList.add('selected');
+        installCategory = chip.getAttribute('data-cat');
+        updatePreview();
+      });
+
+      document.getElementById('machineChips').addEventListener('click', (e) => {
+        const chip = e.target.closest('.chip-item');
+        if(!chip) return;
+        document.querySelectorAll('#machineChips .chip-item').forEach(c => c.classList.remove('selected'));
+        chip.classList.add('selected');
+        machineModel = chip.getAttribute('data-model');
+        updatePreview();
+      });
+
+      const cNotesInput = document.getElementById('cNotes');
+
+      function syncNotesChips() {
+        const current = cNotesInput.value;
+        document.querySelectorAll('#notesPresetChips .chip-item').forEach(chip => {
+          const note = chip.getAttribute('data-note');
+          chip.classList.toggle('selected', current.split(',').map(s => s.trim()).includes(note));
+        });
+      }
+
+      document.getElementById('notesPresetChips').addEventListener('click', (e) => {
+        const chip = e.target.closest('.chip-item');
+        if (!chip) return;
+        const note = chip.getAttribute('data-note');
+        let parts = cNotesInput.value.split(',').map(s => s.trim()).filter(Boolean);
+        const idx = parts.indexOf(note);
+        if (idx > -1) {
+          parts.splice(idx, 1);
+        } else {
+          parts.push(note);
+        }
+        cNotesInput.value = parts.join(', ');
+        syncNotesChips();
+        updatePreview();
+      });
+
+      cNotesInput.addEventListener('input', syncNotesChips);
+
+      const colourChips = document.getElementById('colourChips');
+      const iColourCustom = document.getElementById('iColourCustom');
+      colourChips.addEventListener('click', (e) => {
+        const chip = e.target.closest('.chip-item');
+        if (!chip) return;
+        colourChips.querySelectorAll('.chip-item').forEach(c => c.classList.remove('selected'));
+        chip.classList.add('selected');
+        const value = chip.getAttribute('data-colour');
+        if (value === '__custom__') {
+          iColourCustom.style.display = 'block';
+          iColourCustom.focus();
+          machineColour = iColourCustom.value.trim();
+        } else {
+          iColourCustom.style.display = 'none';
+          machineColour = value;
+        }
+        updatePreview();
+      });
+      iColourCustom.addEventListener('input', () => {
+        machineColour = iColourCustom.value.trim();
+        updatePreview();
+      });
+
+      document.getElementById('installPayMethodChips').addEventListener('click', (e) => {
+        const chip = e.target.closest('.chip-item');
+        if (!chip) return;
+        document.querySelectorAll('#installPayMethodChips .chip-item').forEach(c => c.classList.remove('selected'));
+        chip.classList.add('selected');
+        installPaymentMethod = chip.getAttribute('data-method');
+        updatePreview();
+      });
+
+      document.getElementById('iGetGpsBtn').addEventListener('click', () => {
+        if (!navigator.geolocation) {
+          showToast('GPS is not supported on this device/browser.');
+          return;
+        }
+        showToast('Fetching GPS location...');
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            const lat = pos.coords.latitude.toFixed(6);
+            const lng = pos.coords.longitude.toFixed(6);
+            installGpsLink = `https://www.google.com/maps?q=${lat},${lng}`;
+            installGpsCoords = `${lat}, ${lng}`;
+            const statusEl = document.getElementById('iGpsStatus');
+            statusEl.style.display = 'block';
+            statusEl.innerHTML = `📍 Location captured: <a href="${installGpsLink}" target="_blank" rel="noopener" style="color: var(--primary);">${lat}, ${lng} (View on Map)</a>`;
+            showToast('GPS location added!');
+            updatePreview();
+          },
+          (err) => {
+            console.error(err);
+            showToast('Could not get GPS location: ' + err.message, 4000);
+          },
+          { enableHighAccuracy: true, timeout: 10000 }
+        );
+      });
+
+      async function pickContact(nameId, phoneId) {
+        if ('contacts' in navigator && 'select' in navigator.contacts) {
+          try {
+            const contacts = await navigator.contacts.select(['name', 'tel'], { multiple: false });
+            if (contacts && contacts.length > 0) {
+              if (contacts[0].name?.[0]) document.getElementById(nameId).value = contacts[0].name[0];
+              if (contacts[0].tel?.[0]) document.getElementById(phoneId).value = contacts[0].tel[0];
+              updatePreview();
+              showToast('Contact loaded successfully!');
+            }
+          } catch(err) { console.error(err); }
+        } else {
+          showToast('Contact picker not supported on this browser');
+        }
+      }
+      document.getElementById('cPickContactBtn').addEventListener('click', () => pickContact('cName', 'cPhone'));
+      document.getElementById('iPickContactBtn').addEventListener('click', () => pickContact('iName', 'iPhone'));
+
+      function padBillingRow(label, amount, width = 28) {
+        const amtStr = '₹' + amount;
+        const gap = Math.max(width - label.length - amtStr.length, 1);
+        return label + ' '.repeat(gap) + amtStr;
+      }
+
+      function complaintNoLine() { return currentJobId ? `\n🔖 Complaint No: *${currentJobId}*` : ''; }
+      function techLine() { const t = techNameInput.value.trim(); return t ? `\n👷 Technician: *${t}*` : ''; }
+      function jobMetaLines() { return complaintNoLine() + techLine(); }
+
+      function generateMessage() {
+        if (currentTab === 'complaint') {
+          const date = document.getElementById('cDate').value || 'Today';
+          const name = document.getElementById('cName').value || 'Customer';
+          const partsArray = Array.from(selectedParts);
+          const partsLines = partsArray.length > 0
+            ? partsArray.map(p => `   • ${p}`).join('\n')
+            : '   • None';
+          const serviceCharge = parseFloat(document.getElementById('cServiceCharge').value) || 0;
+          const partsCost = parseFloat(document.getElementById('cPartsCost').value) || 0;
+          const totalBill = serviceCharge + partsCost;
+          const notes = document.getElementById('cNotes').value || 'None';
+
+          const billingBlock = '```\n' +
+            padBillingRow('Service Charge', serviceCharge) + '\n' +
+            padBillingRow('Spare Parts', partsCost) + '\n' +
+            '‐'.repeat(28) + '\n' +
+            padBillingRow('TOTAL', totalBill) + '\n' +
+            '```';
+
+          return `✅ *SERVICE & REPAIR REPORT*
+━━━━━━━━━━━━━━━━━━━━━
+
+Hi *${name}*, thank you for choosing SmartChoice! Here's a summary of today's visit:
+
+📅 Date: *${date}*${complaintNoLine()}
+
+🔧 Issue Diagnosed: *${getProblemText() || 'General Checkup'}*
+
+🛠️ Services Performed (Parts Changed):
+${partsLines}
+
+💳 *BILLING SUMMARY*
+${billingBlock}
+Payment Status: *${paymentType}*
+${techLine()}
+📝 Technician Note: _${notes}_
+
+━━━━━━━━━━━━━━━━━━━━━
+🙏 Thank you for trusting *SmartChoice*!`;
+        } else {
+          const name = document.getElementById('iName').value || 'Customer';
+          const date = document.getElementById('iDate').value || 'Today';
+          const address = document.getElementById('iAddress').value || 'N/A';
+          const amount = document.getElementById('iPaymentAmount').value || '0';
+          const colourLine = machineColour ? `🎨 Colour: *${machineColour}*\n` : '';
+          const gpsLine = installGpsLink ? `📍 Map Location: ${installGpsLink}\n` : '';
+
+          return `✅ *NEW RO INSTALLATION DONE*
+━━━━━━━━━━━━━━━━━━━━━
+
+Hi *${name}*, your new water purifier is up and running! 🎉
+
+💧 Model: *${machineModel}*
+${colourLine}📦 Subscription Package: *${installCategory}*
+📅 Date: *${date}*${jobMetaLines()}
+🏠 Address: ${address}
+${gpsLine}
+💳 Payment: *${installPaymentMethod}* — ₹${amount}
+
+━━━━━━━━━━━━━━━━━━━━━
+🙏 Thank you for trusting *SmartChoice*!`;
+        }
+      }
+
+      function updatePreview() {
+        const msg = generateMessage();
+        document.getElementById('waPreviewText').textContent = msg;
+        // Sharing is only available for a submitted job whose details haven't changed since
+        const ready = !!currentJobId && msg === submittedMsg;
+        document.getElementById('sendWhatsappBtn').disabled = !ready;
+        document.getElementById('generatePdfBtn').disabled = !ready;
+        document.getElementById('shareHint').style.display = ready ? 'none' : 'block';
+        document.getElementById('shareHint').textContent = currentJobId
+          ? 'Details changed - tap Update Job to enable sharing again'
+          : 'Submit the job to enable WhatsApp and PDF sharing';
+        document.getElementById('saveJobBtn').textContent = currentJobId ? 'Update Job' : 'Submit Job';
+      }
+
+      document.querySelectorAll('input, textarea').forEach(el => {
+        el.addEventListener('input', updatePreview);
+      });
+
+      function showToast(text, duration = 2500) {
+        const t = document.getElementById('toastNotification');
+        t.textContent = text;
+        t.classList.add('show');
+        clearTimeout(t._hideTimer);
+        t._hideTimer = setTimeout(() => t.classList.remove('show'), duration);
+      }
+
+      document.getElementById('copyMsgBtn').addEventListener('click', () => {
+        const msg = generateMessage();
+        copyTextSafely(msg).then(ok => { if (ok) showToast('Text copied!'); else showManualCopy(msg); });
+      });
+
+      function resetForm() {
+        currentJobId = null; submittedMsg = '';
+        document.getElementById('cDate').value = '';
+        document.getElementById('cName').value = '';
+        document.getElementById('cPhone').value = '';
+        applyPaymentDefaults();
+        document.getElementById('cNotes').value = '';
+        
+        document.getElementById('iName').value = '';
+        document.getElementById('iPhone').value = '';
+        document.getElementById('iDate').value = '';
+        document.getElementById('iAddress').value = '';
+        document.getElementById('iPaymentAmount').value = '';
+        document.getElementById('iColourCustom').value = '';
+        document.getElementById('iColourCustom').style.display = 'none';
+        document.getElementById('iGpsStatus').style.display = 'none';
+
+        selectedProblems = [];
+        customPartsList = [];
+        selectedParts.clear();
+        installGpsLink = '';
+        installGpsCoords = '';
+        capturedImages = [];
+        renderPhotoThumbnails();
+
+        problemChips.querySelectorAll('.chip-item').forEach(c => c.classList.remove('selected'));
+        subOptionsBox.classList.remove('active');
+        partsContainer.innerHTML = '';
+        syncNotesChips();
+
+        updatePreview();
+        showToast('Form reset to blank mode');
+      }
+
+      document.getElementById('resetFormBtn').addEventListener('click', resetForm);
+
+      document.getElementById('sendWhatsappBtn').addEventListener('click', () => {
+        if (!currentJobId) { showToast('Submit the job first'); return; }
+        const phone = currentTab === 'complaint' ? document.getElementById('cPhone').value : document.getElementById('iPhone').value;
+        const encodedText = encodeURIComponent(generateMessage());
+        const url = phone ? `https://wa.me/91${phone}?text=${encodedText}` : `https://wa.me/?text=${encodedText}`;
+        window.open(url, '_blank');
+      });
+
+      let pendingPdfBlob = null;
+      let pendingPdfFile = null;
+      let pendingCustomerName = '';
+      const pdfPreviewModal = document.getElementById('pdfPreviewModal');
+
+      document.getElementById('generatePdfBtn').addEventListener('click', async () => {
+        if (!currentJobId) { showToast('Submit the job first'); return; }
+        const customerName = (currentTab === 'complaint' ? document.getElementById('cName').value : document.getElementById('iName').value) || 'Customer';
+        const reportDate = (currentTab === 'complaint' ? document.getElementById('cDate').value : document.getElementById('iDate').value) || 'Today';
+
+        document.getElementById('pdfReportId').textContent = currentJobId;
+        document.getElementById('pdfIssueDate').textContent = reportDate;
+        document.getElementById('pdfCustName').textContent = customerName;
+        document.getElementById('pdfCustContactInfo').textContent = (currentTab === 'complaint' ? document.getElementById('cPhone').value : document.getElementById('iPhone').value) || 'N/A';
+
+        const pdfStatusPill = document.getElementById('pdfStatusPill');
+        const pdfTableItemsBody = document.getElementById('pdfTableItemsBody');
+        pdfTableItemsBody.innerHTML = '';
+
+        const pdfTableHead = document.getElementById('pdfTableHead');
+        const defaultTableHead = `
+          <tr>
+            <th style="width: 68%;">Work / Part</th>
+            <th class="center" style="width: 14%;">Qty</th>
+            <th class="center" style="width: 18%;">Status</th>
+          </tr>`;
+        pdfTableHead.innerHTML = defaultTableHead;
+
+        if (currentTab === 'install') {
+          document.getElementById('pdfDocMainTitle').textContent = 'INSTALLATION COMPLETION REPORT';
+          document.getElementById('pdfSubCategoryLabel').textContent = 'Installation & Setup Completed';
+          document.getElementById('pdfJobTypeBadge').textContent = 'Installation';
+          
+          const addressBlock = document.getElementById('pdfCustAddressBlock');
+          addressBlock.style.display = 'block';
+          const gpsSuffix = installGpsCoords ? ` (GPS: ${installGpsCoords})` : '';
+          addressBlock.textContent = (document.getElementById('iAddress').value || 'N/A') + gpsSuffix;
+
+          const paidAmount = parseFloat(document.getElementById('iPaymentAmount').value) || 0;
+          pdfStatusPill.textContent = installPaymentMethod + ' (Paid)';
+          pdfStatusPill.className = 'pdf-status-pill paid';
+
+          document.getElementById('pdfIssueDiagnosedVal').textContent = 'New Unit Installation & Setup';
+          document.getElementById('pdfServicePerformedVal').textContent = `${machineModel} Fitted & Tested Successfully`;
+
+          pdfTableItemsBody.innerHTML = `
+            <tr>
+              <td><b>${machineModel}</b>${machineColour ? '<small>Colour: ' + machineColour + '</small>' : ''}</td>
+              <td class="center">1</td>
+              <td class="center"><b>Completed</b></td>
+            </tr>
+            <tr>
+              <td><b>Installation & Setup</b><small>${installCategory} package · Fitment & testing completed</small></td>
+              <td class="center">1</td>
+              <td class="center"><b>Completed</b></td>
+            </tr>
+          `;
+
+          document.getElementById('pdfNotesContainer').style.display = 'none';
+
+        } else {
+          document.getElementById('pdfDocMainTitle').textContent = 'SERVICE COMPLETION REPORT';
+          document.getElementById('pdfSubCategoryLabel').textContent = 'Work Completed & Service Details';
+          document.getElementById('pdfJobTypeBadge').textContent = 'Service & Repair';
+          document.getElementById('pdfCustAddressBlock').style.display = 'none';
+
+          const sCharge = parseFloat(document.getElementById('cServiceCharge').value) || 0;
+          const pCost = parseFloat(document.getElementById('cPartsCost').value) || 0;
+          const totalBill = sCharge + pCost;
+
+          const isPaid = paymentType.toLowerCase().includes('paid') && !paymentType.toLowerCase().includes('free');
+          pdfStatusPill.textContent = isPaid ? 'Paid' : 'Free (Company Paid)';
+          pdfStatusPill.className = 'pdf-status-pill ' + (isPaid ? 'paid' : 'free');
+
+          const partsArray = Array.from(selectedParts);
+          const partsDescriptionStr = partsArray.length > 0 ? partsArray.join(', ') : 'None replaced';
+
+          document.getElementById('pdfIssueDiagnosedVal').textContent = getProblemText() || 'General Checkup & Diagnostics';
+          document.getElementById('pdfServicePerformedVal').textContent = partsArray.length > 0 ? `Replaced: ${partsDescriptionStr}` : 'General Maintenance & Adjustments Done';
+
+          if (isPaid) {
+            // Customer Paid: show bill amounts per line and a grand total
+            const money = (n) => '₹' + n.toLocaleString('en-IN');
+            pdfTableHead.innerHTML = `
+              <tr>
+                <th style="width: 46%;">Work / Part</th>
+                <th class="center" style="width: 10%;">Qty</th>
+                <th class="center" style="width: 18%;">Status</th>
+                <th class="right" style="width: 26%;">Amount</th>
+              </tr>`;
+            pdfTableItemsBody.innerHTML = `
+              <tr>
+                <td><b>Service Charge</b><small>${getProblemText() || 'General Checkup & Diagnostics'}</small></td>
+                <td class="center">1</td>
+                <td class="center"><b>Completed</b></td>
+                <td class="right"><b>${money(sCharge)}</b></td>
+              </tr>
+              <tr>
+                <td><b>Spare Parts</b><small>${partsDescriptionStr}</small></td>
+                <td class="center">${partsArray.length || 0}</td>
+                <td class="center"><b>Completed</b></td>
+                <td class="right"><b>${money(pCost)}</b></td>
+              </tr>
+              <tr>
+                <td colspan="3" class="right" style="font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; border-top: 2px solid #0f172a; border-bottom: none;">Total</td>
+                <td class="right" style="font-size: 14px; font-weight: 800; border-top: 2px solid #0f172a; border-bottom: none;">${money(totalBill)}</td>
+              </tr>
+            `;
+          } else {
+            pdfTableItemsBody.innerHTML = `
+            <tr>
+              <td><b>Service / Repair Work</b><small>${getProblemText() || 'General Checkup & Diagnostics'}</small></td>
+              <td class="center">1</td>
+              <td class="center"><b>Completed</b></td>
+            </tr>
+            <tr>
+              <td><b>Parts Changed</b><small>${partsDescriptionStr}</small></td>
+              <td class="center">${partsArray.length || 0}</td>
+              <td class="center"><b>Completed</b></td>
+            </tr>
+          `;
+          }
+
+          const notesVal = document.getElementById('cNotes').value;
+          if (notesVal) {
+            document.getElementById('pdfNotesContainer').style.display = 'block';
+            document.getElementById('pdfNotesText').textContent = notesVal;
+          } else {
+            document.getElementById('pdfNotesContainer').style.display = 'none';
+          }
+        }
+
+        const pdfPhotoSection = document.getElementById('pdfPhotoSection');
+        const pdfPhotoFrame = document.getElementById('pdfPhotoFrame');
+        pdfPhotoFrame.innerHTML = '';
+        if (capturedImages.length > 0) {
+          pdfPhotoSection.style.display = 'block';
+          const loadPromises = capturedImages.map((src) => {
+            return new Promise((resolve) => {
+              const img = document.createElement('img');
+              img.onload = resolve;
+              img.onerror = resolve;
+              img.src = src;
+              pdfPhotoFrame.appendChild(img);
+              if (img.decode) {
+                img.decode().then(resolve).catch(resolve);
+              }
+            });
+          });
+          await Promise.all(loadPromises);
+        } else {
+          pdfPhotoSection.style.display = 'none';
+        }
+
+        const pdfTechPhoto = document.getElementById('pdfTechPhoto');
+        const pdfTechName = document.getElementById('pdfTechName');
+        const pdfTechPhotoWrap = document.getElementById('pdfTechPhotoWrap');
+        if (techPhoto && techPhotoShow.checked) {
+          pdfTechPhoto.src = techPhoto;
+          pdfTechPhotoWrap.style.display = 'flex';
+          try { await pdfTechPhoto.decode(); } catch (e) { /* ignore */ }
+        } else {
+          pdfTechPhoto.removeAttribute('src');
+          pdfTechPhotoWrap.style.display = 'none';
+        }
+        const techNameVal = techNameInput.value.trim();
+        pdfTechName.textContent = techNameVal;
+        pdfTechName.style.display = techNameVal ? 'block' : 'none';
+
+        if (document.fonts && document.fonts.ready) {
+          try { await document.fonts.ready; } catch (e) { /* ignore */ }
+        }
+
+        showToast('Generating Single-Page PDF...');
+
+        const element = document.getElementById('pdfTemplate');
+        const opt = {
+          margin:       0,
+          filename:     `${customerName}_${reportDate}.pdf`,
+          image:        { type: 'jpeg', quality: 0.98 },
+          html2canvas:  {
+            scale: 2,
+            useCORS: true,
+            logging: false,
+            backgroundColor: '#ffffff',
+            scrollX: 0,
+            scrollY: 0,
+            width: 794,
+            height: 1122,
+            windowWidth: 794,
+            windowHeight: 1122,
+            onclone: (clonedDoc) => {
+              const clonedWrapper = clonedDoc.getElementById('pdfWrapperContainer');
+              if (clonedWrapper) {
+                clonedWrapper.style.position = 'static';
+                clonedWrapper.style.opacity = '1';
+                clonedWrapper.style.zIndex = 'auto';
+                clonedWrapper.style.pointerEvents = 'auto';
+              }
+            }
+          },
+          jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        try {
+          // Use html2pdf.js's own Worker pipeline throughout, since the bundled
+          // build does not expose html2canvas / jsPDF as separate globals.
+          const worker = html2pdf().set(opt).from(element);
+
+          await worker.toCanvas();
+          const canvas = await worker.get('canvas');
+          const imgData = canvas.toDataURL('image/jpeg', 0.98);
+
+          const scale = opt.html2canvas.scale;
+          const pxToMm = 25.4 / 96;
+          const pageWidthMm = (canvas.width / scale) * pxToMm;
+          const pageHeightMm = (canvas.height / scale) * pxToMm;
+
+          // Resize the PDF page to exactly match the captured content so it
+          // stays a single page, then let the same worker produce the blob.
+          worker.opt.jsPDF = {
+            unit: 'mm',
+            format: [pageWidthMm, pageHeightMm],
+            orientation: pageWidthMm > pageHeightMm ? 'landscape' : 'portrait'
+          };
+
+          await worker.toPdf();
+          const pdfBlob = await worker.output('blob');
+
+          const safeCustomerName = customerName.replace(/[^a-zA-Z0-9]/g, '_');
+          const safeDate = reportDate.replace(/[^a-zA-Z0-9]/g, '_');
+          const fileName = `${safeCustomerName}_${safeDate}.pdf`;
+          
+          pendingPdfBlob = pdfBlob;
+          pendingPdfFile = new File([pdfBlob], fileName, { type: "application/pdf" });
+          pendingCustomerName = customerName;
+
+          document.getElementById('pdfPreviewImg').src = imgData;
+          pdfPreviewModal.classList.add('active');
+        } catch (err) {
+          console.error(err);
+          showToast('PDF generation failed (' + (err && err.message ? err.message : 'unknown error') + '). Downloading backup.', 5000);
+          html2pdf().from(element).set(opt).save();
+        }
+      });
+
+      document.getElementById('closePdfPreviewModal').addEventListener('click', () => {
+        pdfPreviewModal.classList.remove('active');
+      });
+
+      // Share the generated PDF through the Android/iOS system share sheet.
+      // This is the browser-supported equivalent of Vyapar's "share to any app" flow.
+      document.getElementById('confirmShareBtn').addEventListener('click', async () => {
+        if (!pendingPdfFile) {
+          showToast('Please generate the PDF report first.', 3000);
+          return;
+        }
+
+        const canNativeShareFile = typeof navigator.share === 'function' &&
+          (typeof navigator.canShare !== 'function' || navigator.canShare({ files: [pendingPdfFile] }));
+
+        if (canNativeShareFile) {
+          try {
+            // Passing the File object (not a URL) keeps the PDF as an attachment,
+            // and WhatsApp appears directly in this native share sheet.
+            await navigator.share({
+              files: [pendingPdfFile],
+              title: 'SmartChoice Service Completion Report',
+              text: `Hello ${pendingCustomerName}, please find your SmartChoice service completion report attached.`
+            });
+            showToast('Choose WhatsApp, Email, Drive or any other app from the share sheet.', 4500);
+            return;
+          } catch (err) {
+            console.error('PDF share error:', err);
+            if (err && err.name === 'AbortError') return;
+            // Fall through to the WhatsApp fallback below.
+          }
+        }
+
+        // Fallback for browsers/contexts where direct file sharing isn't available
+        // (e.g. this page opened as a local file instead of over HTTPS): save the
+        // PDF locally and open WhatsApp so the user can attach it in one motion.
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(pendingPdfBlob);
+        a.download = pendingPdfFile.name;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+
+        const waText = encodeURIComponent(`Hello ${pendingCustomerName}, please find your SmartChoice service completion report attached (${pendingPdfFile.name}).`);
+        window.open(`https://wa.me/?text=${waText}`, '_blank');
+        showToast('PDF saved — attach it from your Downloads in the WhatsApp chat that just opened.', 6000);
+      });
+
+      document.getElementById('downloadInsteadBtn').addEventListener('click', () => {
+        if (!pendingPdfBlob) return;
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(pendingPdfBlob);
+        const customerName = (currentTab === 'complaint' ? document.getElementById('cName').value : document.getElementById('iName').value) || 'Customer';
+        const reportDate = (currentTab === 'complaint' ? document.getElementById('cDate').value : document.getElementById('iDate').value) || 'Today';
+        const safeCustomerName = customerName.replace(/[^a-zA-Z0-9]/g, '_');
+        const safeDate = reportDate.replace(/[^a-zA-Z0-9]/g, '_');
+        a.download = `${safeCustomerName}_${safeDate}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        showToast('PDF file downloaded successfully!');
+      });
+
+      document.getElementById('saveJobBtn').addEventListener('click', async () => {
+        const history = readHistory();
+        const fields = {
+          type: currentTab,
+          name: currentTab === 'complaint' ? document.getElementById('cName').value : document.getElementById('iName').value,
+          phone: currentTab === 'complaint' ? document.getElementById('cPhone').value : document.getElementById('iPhone').value,
+          summary: currentTab === 'complaint' ? getProblemText() : machineModel,
+          issue: currentTab === 'complaint' ? (getProblemText() || 'General Checkup') : 'New Unit Installation',
+          service: currentTab === 'complaint'
+            ? (selectedParts.size > 0 ? Array.from(selectedParts).join(', ') : 'None replaced')
+            : `${machineModel} installed`,
+          tech: techNameInput.value.trim(),
+          techId: TECH_CODE,
+          cloud: false
+        };
+        let job = currentJobId ? history.find(j => j.id === currentJobId) : null;
+        if (job) {
+          Object.assign(job, fields);          // resubmitting updates the same record
+        } else {
+          job = Object.assign({ ts: Date.now(), date: fmtDMY(Date.now()), text: '' }, fields);
+          history.unshift(job);
+          normalizeHistory(history);           // assigns the complaint number
+        }
+        currentJobId = job.id;
+        job.text = generateMessage();          // message now carries complaint no + technician
+        submittedMsg = job.text;
+        saveHistory(history);
+        updatePreview();
+
+        // Save locally first, then push this exact job immediately. The Submit
+        // button now waits for the server acknowledgement instead of relying on
+        // the old 60-second retry cycle.
+        if (cloudReady()) {
+          const originalText = document.getElementById('saveJobBtn').textContent;
+          const btn = document.getElementById('saveJobBtn');
+          btn.disabled = true;
+          btn.textContent = 'Saving to team...';
+          renderCloudBar();
+          try {
+            await cloudUpsert(job);
+            markCloud(job.id, true);
+
+            // Pull straight back after the write so this device and the history
+            // view reflect the same server state immediately.
+            await cloudPull(true);
+
+            btn.textContent = originalText;
+            btn.disabled = false;
+            showToast('Job submitted & synced to team ✔');
+          } catch (e) {
+            btn.textContent = originalText;
+            btn.disabled = false;
+            showToast('Job saved on this phone. Team sync will retry automatically.');
+            lastErr = e.message || 'network';
+            renderCloudBar();
+          }
+        } else {
+          showToast('Job submitted! Complaint No: ' + job.id);
+        }
+      });
+
+      const historyModal = document.getElementById('historyModal');
+      const MAX_HISTORY = 1000;
+
+      function escapeHtml(v) {
+        return String(v == null ? '' : v).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+      }
+
+      // ---- Complaint numbers, timestamps, storage ----
+      function parseJobDate(str) {
+        str = String(str || '').trim();
+        if (!str) return null;
+        let m = str.match(/^(\d{4})[\/.\-](\d{1,2})[\/.\-](\d{1,2})/);
+        if (m) return new Date(+m[1], +m[2] - 1, +m[3]).getTime();
+        m = str.match(/^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{2,4})/);
+        if (m) {
+          let d = +m[1], mo = +m[2], y = +m[3];
+          if (y < 100) y += 2000;
+          if (mo > 12 && d <= 12) { const t = d; d = mo; mo = t; } // m/d/y saved by an English (US) phone
+          return new Date(y, mo - 1, d).getTime();
+        }
+        const t = Date.parse(str);
+        return isNaN(t) ? null : t;
+      }
+      function dayKey(ts) {
+        const d = new Date(ts);
+        return String(d.getFullYear() % 100).padStart(2, '0') + String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0');
+      }
+      // Gives every job a timestamp and a unique complaint number like SC-260924-01 (date + daily serial)
+      function fmtDMY(t) {
+        const d = new Date(t);
+        return String(d.getDate()).padStart(2, '0') + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + d.getFullYear();
+      }
+      // Shows any saved date (old formats, or the ISO text Google Sheets returns) as DD-MM-YYYY
+      function niceDate(v) {
+        const str = String(v || '').trim();
+        if (!str) return '';
+        if (/^\d{4}-\d{2}-\d{2}T/.test(str)) { const t = Date.parse(str); if (!isNaN(t)) return fmtDMY(t); }
+        const t = parseJobDate(str);
+        return t ? fmtDMY(t) : str;
+      }
+      function normalizeHistory(list) {
+        let changed = false;
+        list.forEach(j => { if (!j.ts) { j.ts = parseJobDate(j.date) || Date.now(); changed = true; } });
+        const used = new Set(), seq = {};
+        list.forEach(j => {
+          if (!j.id) return;
+          if (used.has(j.id)) { j.id = null; return; }
+          used.add(j.id);
+          const m = String(j.id).match(/^SC-(\d{6})-(?:[A-Z0-9]{3}-)?(\d+)$/);
+          if (m) seq[m[1]] = Math.max(seq[m[1]] || 0, +m[2]);
+        });
+        [...list].sort((a, b) => a.ts - b.ts).forEach(j => {
+          if (j.id) return;
+          const k = dayKey(j.ts);
+          seq[k] = (seq[k] || 0) + 1;
+          j.id = `SC-${k}-${TECH_CODE}-${String(seq[k]).padStart(2, '0')}`;
+          changed = true;
+        });
+        return changed;
+      }
+      function saveHistory(list) {
+        setTimeout(() => { try { renderCloudBar(); } catch (e) {} }, 0);
+        localStorage.setItem('ro_tech_history', JSON.stringify(list.slice(0, MAX_HISTORY)));
+      }
+      function readHistory() {
+        try {
+          const h = JSON.parse(localStorage.getItem('ro_tech_history') || '[]');
+          if (!Array.isArray(h)) return [];
+          if (normalizeHistory(h)) { try { saveHistory(h); } catch (e) {} }
+          return h;
+        } catch (e) { return []; }
+      }
+
+      const historySelected = new Set();
+      let deleteArmTimer = null;
+      const historySearchEl = document.getElementById('historySearch');
+      const historyDeleteBtn = document.getElementById('historyDeleteBtn');
+      const historySelectAll = document.getElementById('historySelectAll');
+
+      // Only jobs recorded within the last five years are listed / searched
+      function getVisibleHistory() {
+        const cutoff = new Date(); cutoff.setFullYear(cutoff.getFullYear() - 5);
+        const all = readHistory().filter(j => j.ts >= cutoff.getTime()).sort((a, b) => b.ts - a.ts);
+        const q = historySearchEl.value.trim().toLowerCase();
+        const qDigits = q.replace(/\D/g, '');
+        const rows = !q ? all : all.filter(j =>
+          String(j.name || '').toLowerCase().includes(q) ||
+          (qDigits && String(j.phone || '').replace(/\D/g, '').includes(qDigits)) ||
+          String(j.tech || '').toLowerCase().includes(q) ||
+          String(j.id || '').toLowerCase().includes(q));
+        return { all, rows, q };
+      }
+
+      function resetDeleteArm() {
+        clearTimeout(deleteArmTimer); deleteArmTimer = null;
+        historyDeleteBtn.textContent = `🗑 Delete selected (${historySelected.size})`;
+      }
+
+      function renderHistory() {
+        const { all, rows, q } = getVisibleHistory();
+        const ids = new Set(all.map(j => j.id));
+        historySelected.forEach(id => { if (!ids.has(id)) historySelected.delete(id); });
+        const container = document.getElementById('historyListContainer');
+        container.innerHTML = '';
+        document.getElementById('historyCountLine').textContent = q
+          ? `${rows.length} match(es) out of ${all.length} jobs (last 5 years)`
+          : `${all.length} jobs saved on this device (last 5 years)`;
+        if (rows.length === 0) {
+          container.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:20px;">${q ? 'No matching jobs found' : 'No saved jobs found'}</div>`;
+        } else {
+          rows.forEach((job) => {
+            const div = document.createElement('div');
+            div.className = 'history-item history-row';
+            div.innerHTML = `
+              <input type="checkbox" class="hist-check" data-id="${escapeHtml(job.id)}" ${historySelected.has(job.id) ? 'checked' : ''}>
+              <div class="history-body">
+                <div style="display:flex; justify-content:space-between; gap:8px; font-weight:700;">
+                  <span>👤 ${escapeHtml(job.name) || 'No Name'} (${escapeHtml(job.phone) || 'No Phone'})</span>
+                  <span style="color:var(--primary); white-space:nowrap;">${escapeHtml(niceDate(job.date))}</span>
+                </div>
+                <div><a href="#" class="cno-link" data-id="${escapeHtml(job.id)}">🔖 ${escapeHtml(job.id)}</a> | <b>Type:</b> ${escapeHtml(String(job.type || '').toUpperCase())}${job.tech ? ' | 👷 ' + escapeHtml(job.tech) : ''}${job.cloud ? ' ☁️' : ''}</div>
+                <div><b>Details:</b> ${escapeHtml(job.summary)}</div>
+              </div>`;
+            container.appendChild(div);
+          });
+        }
+        historySelectAll.checked = rows.length > 0 && rows.every(j => historySelected.has(j.id));
+        historyDeleteBtn.disabled = historySelected.size === 0;
+        document.getElementById('shareSelectedHistoryBtn').disabled = historySelected.size === 0;
+        document.getElementById('shareAllHistoryBtn').disabled = all.length === 0;
+        resetDeleteArm();
+      }
+
+      historySearchEl.addEventListener('input', renderHistory);
+
+      document.getElementById('historyListContainer').addEventListener('click', (e) => {
+        const link = e.target.closest('.cno-link');
+        if (!link) return;
+        e.preventDefault();
+        openJobDetail(link.dataset.id);
+      });
+      document.getElementById('historyListContainer').addEventListener('change', (e) => {
+        const cb = e.target.closest('.hist-check');
+        if (!cb) return;
+        if (cb.checked) historySelected.add(cb.dataset.id); else historySelected.delete(cb.dataset.id);
+        const { rows } = getVisibleHistory();
+        historySelectAll.checked = rows.length > 0 && rows.every(j => historySelected.has(j.id));
+        historyDeleteBtn.disabled = historySelected.size === 0;
+        document.getElementById('shareSelectedHistoryBtn').disabled = historySelected.size === 0;
+        resetDeleteArm();
+      });
+      historySelectAll.addEventListener('change', () => {
+        const { rows } = getVisibleHistory();
+        rows.forEach(j => { if (historySelectAll.checked) historySelected.add(j.id); else historySelected.delete(j.id); });
+        renderHistory();
+      });
+      historyDeleteBtn.addEventListener('click', async () => {
+        if (historySelected.size === 0) return;
+        if (!deleteArmTimer) { // first tap arms, second tap confirms
+          historyDeleteBtn.textContent = `Tap again to delete ${historySelected.size}`;
+          deleteArmTimer = setTimeout(resetDeleteArm, 4000);
+          return;
+        }
+        const cur = readHistory();
+        // Jobs already in the shared sheet can only be deleted by the technician who submitted them
+        const del = cur.filter(j => historySelected.has(j.id) && (!j.cloud || j.techId === TECH_CODE));
+        const kept = historySelected.size - del.length;
+        try {
+          const cloudIds = del.filter(j => j.cloud).map(j => j.id);
+          if (cloudIds.length) await cloudDelete(cloudIds);
+        } catch (e) { resetDeleteArm(); showToast('Could not delete from Google Sheet - check sign-in'); return; }
+        const delIds = new Set(del.map(j => j.id));
+        saveHistory(cur.filter(j => !delIds.has(j.id)));
+        historySelected.clear();
+        renderHistory();
+        showToast(`${del.length} job(s) deleted` + (kept ? `, ${kept} by other technicians kept` : ''));
+      });
+
+      // ---- Job detail (opened from the complaint number link) ----
+      let detailJob = null;
+      function openJobDetail(id) {
+        const job = readHistory().find(j => j.id === id);
+        if (!job) return;
+        detailJob = job;
+        const { issue, service } = getJobLines(job);
+        document.getElementById('jobDetailTitle').textContent = 'Complaint ' + job.id;
+        document.getElementById('jobDetailBody').innerHTML = `
+          <div><b>📅 Date:</b> ${escapeHtml(niceDate(job.date)) || '-'}</div>
+          <div><b>👤 Customer:</b> ${escapeHtml(job.name) || 'No Name'}</div>
+          <div><b>📞 Mobile:</b> ${escapeHtml(job.phone) || '-'}</div>
+          <div><b>Type:</b> ${escapeHtml(String(job.type || '').toUpperCase())}</div>
+          <div><b>👷 Technician:</b> ${escapeHtml(job.tech) || '-'}</div>
+          <div><b>🔧 Issue:</b> ${escapeHtml(issue)}</div>
+          <div><b>🛠️ Service:</b> ${escapeHtml(service)}</div>
+          <pre class="detail-pre">${escapeHtml(job.text)}</pre>`;
+        document.getElementById('jobDetailModal').classList.add('active');
+      }
+      const closeJobDetail = () => document.getElementById('jobDetailModal').classList.remove('active');
+      document.getElementById('closeJobDetailModal').addEventListener('click', closeJobDetail);
+      document.getElementById('jobDetailCloseBtn').addEventListener('click', closeJobDetail);
+      document.getElementById('jobDetailCopyBtn').addEventListener('click', async () => {
+        if (!detailJob) return;
+        if (await copyTextSafely(detailJob.text || '')) showToast('Message copied');
+        else showManualCopy(detailJob.text || '');
+      });
+
+      document.getElementById('historyBtn').addEventListener('click', () => {
+        historySearchEl.value = '';
+        historySelected.clear();
+        renderHistory();
+        historyModal.classList.add('active');
+        cloudSync(false);
+      });
+
+      // ---- Backup / restore ----
+      // Pulls the key lines (issue + service) out of a saved job, including older records
+      function getJobLines(j) {
+        let issue = j.issue, service = j.service;
+        const text = String(j.text || '');
+        if (!issue) {
+          if (j.type === 'install') issue = 'New Unit Installation';
+          else {
+            const m = text.match(/Issue Diagnosed: \*(.*?)\*/);
+            issue = (m && m[1]) || j.summary || 'General Checkup';
+          }
+        }
+        if (!service) {
+          if (j.type === 'install') service = `${j.summary || 'RO'} installed`;
+          else {
+            const m = text.match(/Services Performed \(Parts Changed\):\n((?:\s*•.*\n?)+)/);
+            const parts = m ? m[1].split('\n').map(l => l.replace(/^\s*•\s*/, '').trim()).filter(Boolean) : [];
+            service = parts.length > 0 && !(parts.length === 1 && /^none$/i.test(parts[0])) ? parts.join(', ') : 'None replaced';
+          }
+        }
+        return { issue, service };
+      }
+
+      // Short, readable summary: customer, date, issue, service. Ideal to paste into OneNote.
+      function buildSummaryText(jobsOverride) {
+        const jobs = Array.isArray(jobsOverride) ? jobsOverride : readHistory();
+        const now = new Date();
+        const out = [];
+        out.push('💧 SMARTCHOICE - JOB HISTORY');
+        out.push('🗓️ Exported: ' + now.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) + '  |  Total jobs: ' + jobs.length);
+        out.push('');
+        jobs.forEach((j, i) => {
+          const { issue, service } = getJobLines(j);
+          out.push(`${i + 1}) 👤 ${j.name || 'No Name'} | 📅 ${niceDate(j.date) || '-'}`);
+          out.push(`   📞 Mobile: ${j.phone || '-'}`);
+          out.push(`   🔖 Complaint No: ${j.id || '-'}`);
+          out.push(`   🔧 Issue Diagnosed: ${issue}`);
+          out.push(`   🛠️ Service Performed: ${service}`);
+          out.push('');
+        });
+        return out.join('\n');
+      }
+
+      // Restores from the short summary format (key details only)
+      function parseSummaryText(txt) {
+        const rows = txt.replace(/\r\n/g, '\n').split('\n');
+        const jobs = [];
+        let cur = null;
+        const flush = () => { if (cur) jobs.push(cur); cur = null; };
+        const stripIcons = v => v.replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\uFE0F]/gu, '').trim();
+        rows.forEach(rawRow => {
+          const row = stripIcons(rawRow);
+          const head = row.match(/^\d+\)\s+(.*)$/);
+          if (head) {
+            flush();
+            const sep = head[1].includes(' | ') ? ' | ' : ' - ';
+            const at = head[1].lastIndexOf(sep);
+            const name = at > -1 ? head[1].slice(0, at).trim() : head[1].trim();
+            const date = at > -1 ? head[1].slice(at + sep.length).trim() : '';
+            cur = { type: 'complaint', name: name === 'No Name' ? '' : name, phone: '', summary: '', issue: '', service: '', date: date === '-' ? '' : date, text: '' };
+            return;
+          }
+          if (!cur) return;
+          const cid = row.match(/^Complaint No:\s*(.*)$/);
+          if (cid && cid[1].trim() !== '-') cur.id = cid[1].trim();
+          const mob = row.match(/^Mobile:\s*(.*)$/);
+          const iss = row.match(/^Issue Diagnosed:\s*(.*)$/);
+          const svc = row.match(/^Service Performed:\s*(.*)$/);
+          if (mob) cur.phone = mob[1].trim() === '-' ? '' : mob[1].trim();
+          if (iss) cur.issue = iss[1].trim();
+          if (svc) cur.service = svc[1].trim();
+        });
+        flush();
+        return jobs
+          .filter(j => j.issue || j.service)
+          .map(j => {
+            if (/installation/i.test(j.issue)) j.type = 'install';
+            j.summary = j.type === 'install' ? j.service.replace(/ installed$/, '') : j.issue;
+            j.text = `Customer: ${j.name || '-'}\nMobile: ${j.phone || '-'}\nDate: ${niceDate(j.date) || '-'}\nIssue Diagnosed: ${j.issue}\nService Performed: ${j.service}`;
+            return j;
+          });
+      }
+
+      function parseBackupText(txt) {
+        const rows = txt.replace(/\r\n/g, '\n').split('\n');
+        const jobs = [];
+        let cur = null, inMsg = false;
+        const val = v => (v.trim() === '-' ? '' : v.trim());
+        rows.forEach(row => {
+          if (/^==== JOB \d+ of \d+ ====\s*$/.test(row)) {
+            cur = { type: 'complaint', name: '', phone: '', summary: '', date: '', msg: [] };
+            inMsg = false;
+            return;
+          }
+          if (!cur) return;
+          if (/^==== END OF JOB ====\s*$/.test(row)) {
+            jobs.push({
+              type: cur.type, name: cur.name, phone: cur.phone,
+              summary: cur.summary, date: cur.date, text: cur.msg.join('\n')
+            });
+            cur = null;
+            return;
+          }
+          if (inMsg) { cur.msg.push(row.replace(/^ {1,4}/, '')); return; }
+          if (/^Message\s*:\s*$/.test(row)) { inMsg = true; return; }
+          const m = row.match(/^(Type|Customer|Mobile|Date|Details)\s*:(.*)$/);
+          if (!m) return;
+          const v = val(m[2]);
+          if (m[1] === 'Type') cur.type = /install/i.test(v) ? 'install' : 'complaint';
+          else if (m[1] === 'Customer') cur.name = v;
+          else if (m[1] === 'Mobile') cur.phone = v;
+          else if (m[1] === 'Date') cur.date = v;
+          else if (m[1] === 'Details') cur.summary = v;
+        });
+        return jobs;
+      }
+
+      // Barcode scanner: supports QR and common 1D barcodes through the browser's BarcodeDetector API.
+      let barcodeStream = null;
+      let barcodeTimer = null;
+      let barcodeTarget = null;
+
+      function parseCustomerBarcode(raw) {
+        const text = String(raw || '').trim();
+        if (!text) return null;
+        // Preferred format: JSON {"name":"Customer Name","phone":"9876543210"}
+        try {
+          const obj = JSON.parse(text);
+          const name = obj.name || obj.customer || obj.customerName;
+          const phone = obj.phone || obj.mobile || obj.mobileNumber;
+          if (name || phone) return { name: String(name || '').trim(), phone: String(phone || '').replace(/[^0-9+]/g, '') };
+        } catch (_) {}
+        // Also accept: Name | Phone, Name, Phone, or vCard-like FN/TEL text.
+        const nameMatch = text.match(/(?:^|\n)FN\s*:\s*([^\n]+)/i);
+        const phoneMatch = text.match(/(?:^|\n)TEL[^:]*:\s*([^\n]+)/i);
+        if (nameMatch || phoneMatch) return { name: nameMatch ? nameMatch[1].trim() : '', phone: phoneMatch ? phoneMatch[1].replace(/[^0-9+]/g, '') : '' };
+        const parts = text.split(/\s*[|;,]\s*/).map(v => v.trim()).filter(Boolean);
+        if (parts.length >= 2) {
+          const phoneIndex = parts.findIndex(v => /(?:\+?91\s*)?[6-9]\d{9}$/.test(v.replace(/[\s-]/g, '')));
+          if (phoneIndex >= 0) return { name: parts.filter((_, i) => i !== phoneIndex).join(' '), phone: parts[phoneIndex].replace(/[^0-9+]/g, '') };
+          return { name: parts[0], phone: parts[1].replace(/[^0-9+]/g, '') };
+        }
+        return null;
+      }
+
+      function fillScannedCustomer(raw) {
+        const data = parseCustomerBarcode(raw);
+        if (!data || (!data.name && !data.phone)) {
+          showToast('Barcode found, but Name/Phone could not be read');
+          return false;
+        }
+        const nameId = barcodeTarget === 'complaint' ? 'cName' : 'iName';
+        const phoneId = barcodeTarget === 'complaint' ? 'cPhone' : 'iPhone';
+        if (data.name) document.getElementById(nameId).value = data.name;
+        if (data.phone) document.getElementById(phoneId).value = data.phone;
+        showToast('Name and phone filled from barcode');
+        return true;
+      }
+
+      function stopBarcodeScanner() {
+        if (barcodeTimer) { clearTimeout(barcodeTimer); barcodeTimer = null; }
+        if (barcodeStream) { barcodeStream.getTracks().forEach(t => t.stop()); barcodeStream = null; }
+        const video = document.getElementById('barcodeVideo');
+        if (video) video.srcObject = null;
+        document.getElementById('barcodeModal').classList.remove('active');
+      }
+
+      async function startBarcodeScanner(target) {
+        barcodeTarget = target;
+        const modal = document.getElementById('barcodeModal');
+        const status = document.getElementById('barcodeScanStatus');
+        modal.classList.add('active');
+        if (!('BarcodeDetector' in window)) {
+          status.textContent = 'Barcode scanning is not supported by this browser. Use Chrome on Android, or enter the barcode text manually.';
+          return;
+        }
+        try {
+          const formats = BarcodeDetector.getSupportedFormats ? await BarcodeDetector.getSupportedFormats() : [];
+          const preferred = ['qr_code','code_128','code_39','ean_13','ean_8','upc_a','upc_e','codabar','itf','data_matrix','pdf417'];
+          const supported = preferred.filter(f => !formats.length || formats.includes(f));
+          const detector = new BarcodeDetector(supported.length ? { formats: supported } : undefined);
+          barcodeStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' } }, audio: false });
+          const video = document.getElementById('barcodeVideo');
+          video.srcObject = barcodeStream;
+          await video.play();
+          status.textContent = 'Scanning… keep the barcode inside the camera view.';
+          const scan = async () => {
+            if (!barcodeStream || !modal.classList.contains('active')) return;
+            try {
+              const codes = await detector.detect(video);
+              if (codes.length) {
+                const raw = codes[0].rawValue || '';
+                if (fillScannedCustomer(raw)) { stopBarcodeScanner(); return; }
+              }
+            } catch (_) {}
+            barcodeTimer = setTimeout(scan, 180);
+          };
+          scan();
+        } catch (err) {
+          status.textContent = 'Camera could not be opened. Please allow camera permission and try again.';
+        }
+      }
+
+      document.getElementById('cScanBarcodeBtn').addEventListener('click', () => startBarcodeScanner('complaint'));
+      document.getElementById('iScanBarcodeBtn').addEventListener('click', () => startBarcodeScanner('install'));
+      document.getElementById('closeBarcodeBtn').addEventListener('click', stopBarcodeScanner);
+      document.getElementById('barcodeModal').addEventListener('click', e => { if (e.target.id === 'barcodeModal') stopBarcodeScanner(); });
+      document.getElementById('barcodeManualBtn').addEventListener('click', () => {
+        const raw = window.prompt('Enter the barcode text. Recommended format: Name | Phone');
+        if (raw && fillScannedCustomer(raw)) stopBarcodeScanner();
+      });
+
+      // Share selected or all jobs using the phone's native share sheet.
+      // "Share Selected" uses only the checked jobs; "Share All" uses every saved job.
+      async function shareHistoryJobs(mode) {
+        const allJobs = readHistory();
+        if (allJobs.length === 0) {
+          showToast('No saved jobs to share');
+          return;
+        }
+
+        let jobs = allJobs;
+        let title = 'SmartChoice Job History';
+
+        if (mode === 'selected') {
+          jobs = allJobs.filter(j => historySelected.has(j.id));
+          if (jobs.length === 0) {
+            showToast('Select at least one job to share');
+            return;
+          }
+          title = 'SmartChoice Selected Jobs';
+        } else {
+          title = 'SmartChoice Job History - All Jobs';
+        }
+
+        const text = buildSummaryText(jobs);
+
+        try {
+          if (navigator.share) {
+            await navigator.share({ title, text });
+            showToast(mode === 'selected' ? 'Selected jobs shared' : 'All jobs shared');
+            return;
+          }
+        } catch (e) {
+          if (e && e.name === 'AbortError') return;
+        }
+
+        // Fallback for browsers that do not support the native share sheet.
+        if (await copyTextSafely(text)) {
+          showToast('Job list copied - paste it into OneNote or any app');
+        } else {
+          showManualCopy(text);
+        }
+      }
+
+      document.getElementById('shareSelectedHistoryBtn').addEventListener('click', () => shareHistoryJobs('selected'));
+      document.getElementById('shareAllHistoryBtn').addEventListener('click', () => shareHistoryJobs('all'));
+
+      document.getElementById('restoreBackupBtn').addEventListener('click', () => document.getElementById('restoreBackupInput').click());
+      document.getElementById('restoreBackupInput').addEventListener('change', (e) => {
+        const file = e.target.files && e.target.files[0];
+        e.target.value = '';
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+          try {
+            const raw = String(reader.result).trim();
+            let incoming;
+            if (raw.startsWith('{') || raw.startsWith('[')) {
+              // Older JSON backups
+              const data = JSON.parse(raw);
+              incoming = Array.isArray(data) ? data : data.jobs;
+            } else if (raw.includes('==== JOB')) {
+              // Earlier full-detail text backups
+              incoming = parseBackupText(raw);
+            } else {
+              incoming = parseSummaryText(raw);
+            }
+            if (!Array.isArray(incoming) || incoming.length === 0) throw new Error('bad format');
+            const clean = incoming
+              .filter(j => j && typeof j === 'object' && typeof j.text === 'string')
+              .map(j => ({
+                type: String(j.type || 'complaint'),
+                name: String(j.name || ''),
+                phone: String(j.phone || ''),
+                summary: String(j.summary || ''),
+                issue: j.issue ? String(j.issue) : undefined,
+                service: j.service ? String(j.service) : undefined,
+                date: String(j.date || ''),
+                id: j.id ? String(j.id) : undefined,
+                ts: Number(j.ts) || undefined,
+                text: j.text
+              }));
+            const current = readHistory();
+            const keyOf = j => { const l = getJobLines(j); return [j.date, j.name, l.issue, l.service].join('|'); };
+            const seen = new Set(current.map(keyOf));
+            let added = 0;
+            clean.forEach(j => {
+              if (!seen.has(keyOf(j))) { seen.add(keyOf(j)); current.push(j); added++; }
+            });
+            normalizeHistory(current);
+            current.sort((a, b) => b.ts - a.ts);
+            saveHistory(current);
+            renderHistory();
+            showToast(added > 0 ? `Restored ${added} job(s)` : 'Nothing new to restore');
+          } catch (err) {
+            showToast('Invalid backup file');
+          }
+        };
+        reader.readAsText(file);
+      });
+
+      document.getElementById('closeHistoryModal').addEventListener('click', () => historyModal.classList.remove('active'));
+      document.getElementById('clearHistoryBtn').addEventListener('click', () => {
+        localStorage.removeItem('ro_tech_history');
+        historySelected.clear();
+        renderHistory();
+        showToast('History cleared');
+      });
+
+      // ================= CLOUD: shared Google Sheet (through your Apps Script link) =================
+      const urlOk = u => /^https:\/\/script\.google\.com\/.+\/exec$/.test(String(u || '').trim());
+      const cloudOn = () => urlOk(CLOUD.url);
+      const cloudBar = document.getElementById('cloudBar');
+      let cloudPin = localStorage.getItem('ro_cloud_pin') || '';
+      let unlocked = false, skipped = false;
+      const cloudReady = () => cloudOn() && !!cloudPin;
+
+      const ERR = {
+        url: 'Sync link is invalid. Please contact the admin.',
+        pin: 'Wrong PIN. Please try again.',
+        network: 'Could not reach the server. Check your internet and retry.',
+        timeout: 'Server took too long. Retry in a moment.',
+        badresp: 'Server gave an unexpected reply. In Apps Script deploy as Web app (Who has access: Anyone) and use the new /exec link.'
+      };
+      let lastBad = '';
+      const friendly = c => (ERR[c] || ('Sync failed: ' + c)) + (c === 'badresp' && lastBad ? ' [Reply: ' + lastBad + ']' : '');
+
+      let syncing = false, lastErr = '', lastSync = Number(localStorage.getItem('ro_last_sync')) || 0;
+      const SHORT = { url: 'bad link', pin: 'wrong PIN', network: 'no internet', timeout: 'server slow', badresp: 'server error' };
+      function renderCloudBar() {
+        if (!cloudOn()) { cloudBar.style.display = 'none'; return; }
+        cloudBar.style.display = 'flex';
+        let waiting = 0;
+        try { waiting = readHistory().filter(j => !j.cloud && (!j.techId || j.techId === TECH_CODE)).length; } catch (e) {}
+        const t = lastSync ? new Date(lastSync).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
+        let status;
+        if (syncing) status = '🔄 Syncing...';
+        else if (lastErr) status = `⚠️ Failed (${SHORT[lastErr] || 'error'})`;
+        else if (lastSync) status = `✅ Synced ${t}`;
+        else status = '☁️ Not synced yet';
+        if (waiting && !syncing) status += ` · ${waiting} job${waiting > 1 ? 's' : ''} waiting`;
+        const dot = document.getElementById('cloudDot');
+        if (dot) dot.style.background = syncing ? '#3b82f6' : lastErr ? '#dc2626' : waiting ? '#f59e0b' : lastSync ? '#22c55e' : '#94a3b8';
+        cloudBar.innerHTML = `<span>${status}</span>` + (cloudPin
+          ? `<span><button type="button" data-act="sync">Sync</button> <button type="button" data-act="out">Disconnect</button></span>`
+          : `<button type="button" data-act="in">Connect team</button>`);
+      }
+      cloudBar.addEventListener('click', (e) => {
+        const act = e.target.dataset && e.target.dataset.act;
+        if (act === 'in') { showGate('Enter the team PIN to sync.', false); }
+        else if (act === 'sync') { showToast('Syncing...'); cloudSync(true); }
+        else if (act === 'out') { cloudPin = ''; localStorage.removeItem('ro_cloud_pin'); renderCloudBar(); showGate('Disconnected. Enter the PIN to sync again.', false); }
+      });
+
+      async function cloudCall(payload) {
+        if (!urlOk(CLOUD.url)) throw new Error('url');
+        const ctl = new AbortController();
+        const timer = setTimeout(() => ctl.abort(), 20000);
+        let txt;
+        try {
+          const r = await fetch(CLOUD.url.trim(), {
+            method: 'POST', redirect: 'follow', signal: ctl.signal,
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },   // plain text = no CORS preflight (Apps Script needs this)
+            body: JSON.stringify({ ...payload, pin: cloudPin })
+          });
+          txt = await r.text();
+        } catch (e) { throw new Error(e.name === 'AbortError' ? 'timeout' : 'network'); }
+        finally { clearTimeout(timer); }
+        let d;
+        try { d = JSON.parse(txt); } catch (e) { lastBad = String(txt).replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 110); throw new Error('badresp'); }
+        if (d.error === 'pin') { cloudPin = ''; localStorage.removeItem('ro_cloud_pin'); renderCloudBar(); throw new Error('pin'); }
+        if (d.error) throw new Error(String(d.error));
+        return d;
+      }
+      const jobToRow = j => [j.id, j.ts, j.date || '', j.type || 'complaint', j.name || '', j.phone || '', j.issue || '', j.service || '', j.summary || '', j.tech || '', j.techId || '', j.text || ''];
+      const rowToJob = r => ({ id: String(r[0]), ts: Number(r[1]) || Date.now(), date: niceDate(r[2]), type: String(r[3] || 'complaint'), name: String(r[4] || ''), phone: String(r[5] || ''), issue: String(r[6] || ''), service: String(r[7] || ''), summary: String(r[8] || ''), tech: String(r[9] || ''), techId: String(r[10] || ''), text: String(r[11] || ''), cloud: true });
+
+      const cloudUpsert = job => cloudCall({ action: 'upsert', row: jobToRow(job) });
+      const cloudDelete = idList => cloudCall({ action: 'delete', ids: idList });
+
+      function markCloud(id, value) {
+        const cur = readHistory();
+        const j = cur.find(x => x.id === id);
+        if (j) { j.cloud = value; saveHistory(cur); }
+      }
+
+      // Pull ONLY the shared sheet. This is intentionally separate from uploading so
+      // a freshly submitted job is uploaded once and then immediately visible here.
+      async function cloudPull(quiet = true) {
+        if (!cloudReady()) return 'pin';
+        try {
+          const remote = ((await cloudCall({ action: 'list' })).rows || [])
+            .filter(r => r[0]).map(rowToJob);
+
+          const local = readHistory();
+          const remoteById = new Map(remote.map(j => [j.id, j]));
+          const localById = new Map(local.map(j => [j.id, j]));
+
+          // Keep local jobs that have not reached the server yet.
+          // Replace cloud copies with the server version, and add new team jobs.
+          remote.forEach(rj => {
+            const lj = localById.get(rj.id);
+            if (!lj) local.push(rj);
+            else if (lj.cloud) Object.assign(lj, rj);
+          });
+
+          const remoteIds = new Set(remote.map(j => j.id));
+          const merged = local
+            .filter(j => !j.cloud || remoteIds.has(j.id))
+            .sort((a, b) => b.ts - a.ts);
+
+          saveHistory(merged);
+          if (historyModal && historyModal.classList.contains('active')) renderHistory();
+
+          lastErr = '';
+          lastSync = Date.now();
+          localStorage.setItem('ro_last_sync', String(lastSync));
+          renderCloudBar();
+          return null;
+        } catch (e) {
+          const code = e.message || 'network';
+          lastErr = code;
+          renderCloudBar();
+          if (!quiet) showToast(friendly(code).slice(0, 70));
+          return code;
+        }
+      }
+
+      // Full sync: upload any pending local jobs, then immediately pull the shared
+      // sheet. Kept for the existing manual Sync button and initial sync gate.
+      async function cloudSync(showResult, quiet) {
+        if (!cloudReady()) return cloudOn() ? 'pin' : 'url';
+        if (syncing) return null;
+        syncing = true; renderCloudBar();
+        try {
+          const list = readHistory();
+
+          for (const j of list) {
+            if (!j.cloud && (!j.techId || j.techId === TECH_CODE)) {
+              j.techId = TECH_CODE;
+              j.tech = j.tech || techNameInput.value.trim();
+              await cloudUpsert(j);
+              j.cloud = true;
+            }
+          }
+          saveHistory(list);
+
+          const err = await cloudPull(true);
+          if (err) throw new Error(err);
+
+          syncing = false;
+          lastErr = '';
+          renderCloudBar();
+          if (showResult) {
+            const count = readHistory().length;
+            showToast(`Synced - ${count} jobs available to the team`);
+          }
+          return null;
+        } catch (e) {
+          const code = e.message || 'network';
+          syncing = false;
+          lastErr = code;
+          renderCloudBar();
+          if (!quiet) showToast(friendly(code).slice(0, 70));
+          // Never block the app because cloud sync failed. The technician can
+          // continue working locally; the next background/manual sync retries.
+          // The connection dialog is opened only by an explicit user action.
+          if (code === 'pin' || code === 'url') renderCloudBar();
+          return code;
+        }
+      }
+
+      // ---------- Sync gate: the app opens only after a successful sync ----------
+      const gate = document.getElementById('syncGate');
+      const sgMsg = document.getElementById('sgMsg'), sgPin = document.getElementById('sgPin');
+            const sgGo = document.getElementById('sgGo'), sgSkip = document.getElementById('sgSkip');
+
+      function showGate(msg, isErr = true) {
+        // This dialog is only for an explicit team connection attempt. It never
+        // locks the main application or prevents offline/local work.
+        gate.style.display = 'flex';
+        sgMsg.textContent = msg; sgMsg.className = isErr ? 'err' : '';
+        sgPin.value = cloudPin;
+                sgGo.disabled = false; sgGo.textContent = 'Sync & Open';
+      }
+      async function runGate() {
+        sgGo.disabled = true; sgGo.textContent = 'Syncing...';
+        sgMsg.textContent = 'Syncing with the team sheet...'; sgMsg.className = '';
+        const err = await cloudSync(false, true);
+        if (!err) {
+          unlocked = true; skipped = false; gate.style.display = 'none'; document.body.classList.remove('locked');
+          renderCloudBar(); showToast('Synced ✔');
+        } else showGate(friendly(err));
+      }
+            sgGo.addEventListener('click', () => {
+        const p = sgPin.value.trim();
+        if (!p) return showGate('Enter the team PIN.');
+        cloudPin = p; localStorage.setItem('ro_cloud_pin', p);
+        runGate();
+      });
+      sgSkip.addEventListener('click', () => {
+        skipped = true; unlocked = true;
+        gate.style.display = 'none'; document.body.classList.remove('locked');
+        renderCloudBar();
+        showToast('Working offline - jobs upload when sync works');
+      });
+      sgPin.addEventListener('keydown', e => { if (e.key === 'Enter') sgGo.click(); });
+
+      // Realtime team updates: Google Apps Script does not provide a browser push
+      // channel, so poll the shared sheet frequently while the app is open.
+      // The interval is deliberately short enough that another technician's
+      // submitted job normally appears within a few seconds.
+      let realtimePullBusy = false;
+      const realtimePull = async () => {
+        if (!unlocked || skipped || !cloudReady() || realtimePullBusy || syncing) return;
+        realtimePullBusy = true;
+        try {
+          // First finish any locally queued jobs, then pull the latest team state.
+          const pending = readHistory().some(j => !j.cloud && (!j.techId || j.techId === TECH_CODE));
+          if (pending) await cloudSync(false, true);
+          else await cloudPull(true);
+        } finally {
+          realtimePullBusy = false;
+        }
+      };
+
+      // Retry immediately when connectivity returns.
+      window.addEventListener('online', realtimePull);
+
+      // Near-real-time refresh while the app is open.
+      const realtimeTimer = setInterval(realtimePull, 5000);
+
+      // Refresh when the technician returns to the app/tab.
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) realtimePull();
+      });
+
+      // DIRECT OPEN: never wait for cloud sync. The technician can use the app
+      // immediately; cloud sync runs silently in the background when a PIN is set.
+      unlocked = true;
+      skipped = false;
+      gate.style.display = 'none';
+      document.body.classList.remove('locked');
+      renderCloudBar();
+      if (cloudReady()) cloudSync(false, true);
+
+      updatePreview();
+    });
+  </script>
+</body>
+</html>
